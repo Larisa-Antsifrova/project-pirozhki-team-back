@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const boolParser = require('express-query-boolean');
 const cookieParser = require('cookie-parser');
 
+const db = require('./db/mongo-db');
 const { Limits } = require('./config/limits');
 const HttpCodes = require('./helpers/http-codes');
 const Ports = require('./helpers/ports');
@@ -56,6 +57,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 const startServer = async () => {
   try {
+    await db;
     app.listen(PORT, () => console.log('Server running on port: ', PORT));
   } catch (error) {
     console.log('Error in startServer: ', error.message);
