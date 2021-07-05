@@ -4,7 +4,7 @@ const Statuses = require('../helpers/statuses');
 const calculateTotals = require('../helpers/total-calculator');
 const calculateStatistics = require('../helpers/statistics-calculator');
 
-class CategoriesControllers {
+class StatisticsControllers {
   async getStatistics(req, res, next) {
     try {
       const { startDate, endDate } = req.query;
@@ -27,4 +27,4 @@ class CategoriesControllers {
   }
 }
 
-module.exports = new CategoriesControllers();
+module.exports = new StatisticsControllers();
