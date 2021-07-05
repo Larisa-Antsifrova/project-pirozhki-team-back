@@ -9,7 +9,7 @@ const db = require('./db/mongo-db');
 const { Limits } = require('./config/limits');
 const HttpCodes = require('./helpers/http-codes');
 const Ports = require('./helpers/ports');
-// const authRoutes = require('./router/auth-routes');
+const authRoutes = require('./router/auth-routes');
 // const categoriesRoutes = require('./router/categories-routes');
 // const statisticsRoutes = require('./router/statistics-routes');
 // const transactionsRoutes = require('./router/transactions-routes');
@@ -25,7 +25,7 @@ app.use(express.json({ limit: Limits.JSON }));
 app.use(boolParser());
 app.use(cookieParser());
 
-// app.use(authRoutes);
+app.use('/auth', authRoutes);
 // app.use(categoriesRoutes);
 // app.use(statisticsRoutes);
 // app.use(transactionsRoutes);
