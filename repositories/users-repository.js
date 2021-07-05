@@ -1,19 +1,37 @@
 // methods to work with User model in mongoDB
 const UserModel = require("../models/user-model");
-const { HttpCode } = require("../helpers/http-codes");
+const bcrypt = require("bcryptjs");
+const { v4: uuid } = require("uuid");
+const mailService = require("../service/mail-service");
+const tokenService = require("../service/token-service");
+
+require("colors");
 class AuthRepositories {
-  async registration(email, password) {
+  async registration(name, email, password) {
     const candidate = await UserModel.findOne({ email });
-
     if (candidate) {
-      return res.status(HttpCode.CONFLICT).json({
-        status: "error",
-        code: HttpCode.CONFLICT,
-        message: `User with this email - ${email} is already exist`,
-      });
+      //TODO: доделать, чтоб возвращалась ошибкой 409 и статусом CONFLICT
+      throw new Error(`User with this email - ${email} is already exist`);
     }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await UserModel.create({ email, password });
+    const activationLink = uuid();
+
+    const newUser = await UserModel.create({ name, email, password: hashedPassword, activationLink });
+
+    await mailService.sendActivationMail(email, activationLink);
+
+    const payload = {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+    };
+
+    const tokens = tokenService.generateTokens({ ...payload });
+    await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+    return { ...tokens, user: payload };
   }
 }
 
