@@ -1,7 +1,6 @@
-// Handlers for auth endpoints
-require("colors");
-const authRepositories = require("../repositories/users-repository");
-const { HttpCode } = require("../helpers/http-codes");
+require('colors');
+const authRepositories = require('../repositories/users-repository');
+const HttpCodes = require('../helpers/http-codes');
 
 class AuthController {
   //User registration
@@ -9,9 +8,16 @@ class AuthController {
     try {
       const { name, email, password } = req.body;
 
-      const userData = await authRepositories.registration(name, email, password);
-     
-      res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+      const userData = await authRepositories.registration(
+        name,
+        email,
+        password,
+      );
+
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
 
       return res.json(userData);
     } catch (error) {
@@ -38,7 +44,7 @@ class AuthController {
   //Test
   async getUsers(req, res, next) {
     try {
-      res.json({ message: "Hello auth router" });
+      res.json({ message: 'Hello auth router' });
     } catch (error) {
       next(error);
     }

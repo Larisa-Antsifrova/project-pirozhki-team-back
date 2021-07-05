@@ -1,11 +1,10 @@
-// methods to work with User model in mongoDB
-const UserModel = require("../models/user-model");
-const bcrypt = require("bcryptjs");
-const { v4: uuid } = require("uuid");
-const mailService = require("../service/mail-service");
-const tokenService = require("../service/token-service");
+require('colors');
+const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const UserModel = require('../models/user-model');
+const mailService = require('../services/mail-service');
+const tokenService = require('../services/token-service');
 
-require("colors");
 class AuthRepositories {
   async registration(name, email, password) {
     const candidate = await UserModel.findOne({ email });
@@ -18,7 +17,12 @@ class AuthRepositories {
 
     const activationLink = uuid();
 
-    const newUser = await UserModel.create({ name, email, password: hashedPassword, activationLink });
+    const newUser = await UserModel.create({
+      name,
+      email,
+      password: hashedPassword,
+      activationLink,
+    });
 
     await mailService.sendActivationMail(email, activationLink);
 
