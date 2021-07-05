@@ -9,7 +9,9 @@ const db = require('./db/mongo-db');
 const { Limits } = require('./config/limits');
 const HttpCodes = require('./helpers/http-codes');
 const Ports = require('./helpers/ports');
-// const authRoutes = require('./router/auth-routes');
+const Statuses = require('./helpers/statuses');
+
+const authRoutes = require('./router/auth-routes');
 const categoriesRoutes = require('./router/categories-routes');
 const statisticsRoutes = require('./router/statistics-routes');
 const transactionsRoutes = require('./router/transactions-routes');
@@ -25,7 +27,7 @@ app.use(express.json({ limit: Limits.JSON }));
 app.use(boolParser());
 app.use(cookieParser());
 
-// app.use(authRoutes);
+app.use('/auth', authRoutes);
 app.use(categoriesRoutes);
 app.use(statisticsRoutes);
 app.use(transactionsRoutes);
@@ -34,7 +36,7 @@ app.use(transactionsRoutes);
 // Handling 404 Not found
 app.use((req, res) => {
   res.status(HttpCodes.NOT_FOUND).json({
-    status: 'error',
+    status: Statuses.ERROR,
     code: HttpCodes.NOT_FOUND,
     message: 'Not Found.',
   });
@@ -45,7 +47,10 @@ app.use((err, req, res, next) => {
   const statusCode = err.status || HttpCodes.INTERNAL_SERVER_ERROR;
 
   res.status(statusCode).json({
-    status: statusCode === HttpCodes.INTERNAL_SERVER_ERROR ? 'fail' : 'error',
+    status:
+      statusCode === HttpCodes.INTERNAL_SERVER_ERROR
+        ? Statuses.FAIL
+        : Statuses.ERROR,
     code: statusCode,
     message: err.message,
   });
