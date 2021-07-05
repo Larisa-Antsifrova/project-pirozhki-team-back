@@ -4,6 +4,8 @@ const Statuses = require('../helpers/statuses');
 
 const getAllTransactions = async (req, res, next) => {
   try {
+    // TODO: refactor to getting All transactions of a specific user
+    // TODO: paginate all transactions by 5 and sort by date
     const allTransactions = await Transactions.getAllTransactions();
 
     res.json({
@@ -18,6 +20,7 @@ const getAllTransactions = async (req, res, next) => {
 
 const addTransaction = async (req, res, next) => {
   try {
+    // TODO: Add owner field with current users ID
     const transaction = req.body;
     const addedTransaction = await Transactions.addTransaction(transaction);
 
