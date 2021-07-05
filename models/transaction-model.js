@@ -4,7 +4,7 @@ const Categories = require('../helpers/categories');
 const transactionSchema = new Schema(
   {
     date: {
-      type: String,
+      type: Date,
       required: [true, 'Date is required.'],
     },
     income: {
@@ -23,10 +23,6 @@ const transactionSchema = new Schema(
       type: Number,
       min: 0,
       required: [true, 'Sum is required.'],
-    },
-    balance: {
-      type: Number,
-      required: [true, 'Balance is required.'],
     },
     owner: {
       type: Schema.Types.ObjectId,
