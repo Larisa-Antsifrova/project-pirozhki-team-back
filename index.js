@@ -10,7 +10,7 @@ const { Limits } = require('./config/limits');
 const HttpCodes = require('./helpers/http-codes');
 const Ports = require('./helpers/ports');
 // const authRoutes = require('./router/auth-routes');
-// const categoriesRoutes = require('./router/categories-routes');
+const categoriesRoutes = require('./router/categories-routes');
 // const statisticsRoutes = require('./router/statistics-routes');
 const transactionsRoutes = require('./router/transactions-routes');
 // const userRoutes = require('./router/user-routes');
@@ -26,7 +26,7 @@ app.use(boolParser());
 app.use(cookieParser());
 
 // app.use(authRoutes);
-// app.use(categoriesRoutes);
+app.use(categoriesRoutes);
 // app.use(statisticsRoutes);
 app.use(transactionsRoutes);
 // app.use(userRoutes);
