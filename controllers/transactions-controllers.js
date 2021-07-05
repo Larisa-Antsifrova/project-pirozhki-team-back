@@ -1,6 +1,7 @@
 const Transactions = require('../repositories/transactions-repository');
 const HttpCodes = require('../helpers/http-codes');
 const Statuses = require('../helpers/statuses');
+const calculateTotals = require('../helpers/total-calculator');
 
 class TransactionControllers {
   async getAllTransactions(req, res, next) {
@@ -8,11 +9,12 @@ class TransactionControllers {
       // TODO: refactor to getting All transactions of a specific user
       // TODO: paginate all transactions by 5 and sort by date
       const allTransactions = await Transactions.getAllTransactions();
+      const totals = calculateTotals(allTransactions);
 
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: allTransactions,
+        data: { allTransactions, totals },
       });
     } catch (error) {
       next(error);
