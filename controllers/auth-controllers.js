@@ -1,9 +1,19 @@
 // Handlers for auth endpoints
+require("colors");
+const authRepositories = require("../repositories/users-repository");
+const { HttpCode } = require("../helpers/http-codes");
 
 class AuthController {
   //User registration
   async registration(req, res, next) {
     try {
+      const { name, email, password } = req.body;
+
+      const userData = await authRepositories.registration(name, email, password);
+     
+      res.cookie("refreshToken", userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
+      return res.json(userData);
     } catch (error) {
       next(error);
     }
@@ -13,7 +23,7 @@ class AuthController {
   async login(req, res, next) {
     try {
     } catch (error) {
-      next(error);
+      // next(error);
     }
   }
 
@@ -21,7 +31,7 @@ class AuthController {
   async logout(req, res, next) {
     try {
     } catch (error) {
-      next(error);
+      // next(error);
     }
   }
 
