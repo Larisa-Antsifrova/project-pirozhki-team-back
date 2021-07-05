@@ -12,7 +12,7 @@ const Ports = require('./helpers/ports');
 // const authRoutes = require('./router/auth-routes');
 // const categoriesRoutes = require('./router/categories-routes');
 // const statisticsRoutes = require('./router/statistics-routes');
-// const transactionsRoutes = require('./router/transactions-routes');
+const transactionsRoutes = require('./router/transactions-routes');
 // const userRoutes = require('./router/user-routes');
 
 const PORT = process.env.PORT || Ports.DEFAULT;
@@ -28,7 +28,7 @@ app.use(cookieParser());
 // app.use(authRoutes);
 // app.use(categoriesRoutes);
 // app.use(statisticsRoutes);
-// app.use(transactionsRoutes);
+app.use(transactionsRoutes);
 // app.use(userRoutes);
 
 // Handling 404 Not found
