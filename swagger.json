@@ -5,8 +5,6 @@
     "title": "Wallet App",
     "description": "Webb application for personal finances management."
   },
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
   "servers": [
     {
       "url": "https://awesome-wallet-app.herokuapp.com",
@@ -42,7 +40,35 @@
   "paths": {
     "/auth/registration": {
       "post": {
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "summary": "Registration of a user",
+        "parameters": [],
+        "security": [],
+        "requestBody": {
+          "description": "Registration request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/registrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" },
+          "409": { "description": "Email is in use response" }
+        }
       }
     },
     "/auth/login": {
@@ -67,12 +93,22 @@
     },
     "/categories": {
       "get": {
-        "tags": ["Categories"]
+        "tags": ["Categories"],
+        "summary": "Getting all categories"
       }
     },
     "/statistics": {
       "get": {
-        "tags": ["Statistics"]
+        "tags": ["Statistics"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "password",
+            "required": true,
+            "type": "string",
+            "description": "User's password"
+          }
+        ]
       }
     },
     "/transactions": {
@@ -82,6 +118,70 @@
       "get": {
         "tags": ["Transactions"]
       }
+    }
+  },
+  "components": {
+    "schemas": {
+      "registrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Test"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
+          }
+        }
+      },
+      "registrationSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjU1NzYxOTR9.YbZLT2ATVet_yYlMDuPUy5x_xfYJ7AXMDljGRRgS1pk"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjgxNjA5OTR9.EXNWBeJ0kDpzf2rjrn6whU1cXItSGXnL117jLvJsoiE"
+          },
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's ID",
+                "example": "60e3680607be0344645c9f01"
+              },
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
     }
   }
 }
