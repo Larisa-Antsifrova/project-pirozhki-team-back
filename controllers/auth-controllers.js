@@ -28,7 +28,7 @@ class AuthController {
       const { name, email, password } = req.body;
 
       const userData = await authRepositories.login(name, email, password);
-      
+
       //set in cookies refreshToken
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -44,8 +44,12 @@ class AuthController {
   //User logout
   async logout(req, res, next) {
     try {
+      const { refreshToken } = req.cookies;
+      const token = await authRepositories.logout(refreshToken);
+      res.clearCookie('refreshToken');
+      res.json(token);
     } catch (error) {
-      // next(error);
+      next(error);
     }
   }
 

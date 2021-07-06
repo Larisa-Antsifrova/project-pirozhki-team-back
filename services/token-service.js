@@ -1,6 +1,6 @@
-require('dotenv').config();
-const jwt = require('jsonwebtoken');
-const TokenModel = require('../models/token-model');
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const TokenModel = require("../models/token-model");
 
 const JWT_SECRET_KEY_ACCESS = process.env.JWT_SECRET_KEY_ACCESS;
 const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
@@ -8,10 +8,10 @@ const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
 class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, JWT_SECRET_KEY_ACCESS, {
-      expiresIn: '2h',
+      expiresIn: "2h",
     });
     const refreshToken = jwt.sign(payload, JWT_SECRET_KEY_REFRESH, {
-      expiresIn: '30d',
+      expiresIn: "30d",
     });
 
     return {
@@ -31,6 +31,11 @@ class TokenService {
     const token = await TokenModel.create({ user: userId, refreshToken });
 
     return token;
+  }
+
+  async removeToken(refreshToken) {
+    const tokenData = await TokenModel.findOneAndRemove({ refreshToken });
+    return tokenData;
   }
 }
 
