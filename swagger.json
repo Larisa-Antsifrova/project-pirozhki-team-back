@@ -116,7 +116,24 @@
         "tags": ["Transactions"]
       },
       "get": {
-        "tags": ["Transactions"]
+        "tags": ["Transactions"],
+        "summary": "Getting all transactions of a user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/transactionsSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" },
+          "409": { "description": "Email is in use response" }
+        }
       }
     }
   },
@@ -175,6 +192,128 @@
                 "description": "User's email",
                 "format": "email"
               }
+            }
+          }
+        }
+      },
+      "transactionsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about stansactions and balance totals",
+            "properties": {
+              "allTransactions": {
+                "type": "array",
+                "description": "Array of transactions objects",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Transaction ID",
+                      "example": "60e2fcb6e0801939c8016539"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "Date indicated by the user",
+                      "example": "2021-05-04T21:00:00.000Z"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "description": "Comment for the transaction",
+                      "example": "ЗП Джуна"
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Amount of the transaction",
+                      "example": 500
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "Date of entry creation",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "Date of entry update",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance",
+                    "example": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "allTransactions": [
+              {
+                "id": "60e2fcb6e0801939c8016539",
+                "category": "Регулярный доход",
+                "income": true,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "ЗП Джуна",
+                "sum": 500,
+                "createdAt": "2021-07-05T12:36:06.595Z",
+                "updatedAt": "2021-07-05T12:36:06.595Z"
+              },
+              {
+                "id": "60e2fccce0801939c801653b",
+                "category": "Основные расходы",
+                "income": false,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "Еда",
+                "sum": 200,
+                "createdAt": "2021-07-05T12:36:28.570Z",
+                "updatedAt": "2021-07-05T12:36:28.570Z"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 200,
+              "balance": 300
             }
           }
         }
