@@ -1,0 +1,87 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Wallet App",
+    "description": "Webb application for personal finances management."
+  },
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "servers": [
+    {
+      "url": "https://awesome-wallet-app.herokuapp.com",
+      "description": "Production server for Wallet App"
+    },
+    {
+      "url": "http://localhost:8888",
+      "description": "Development server for Wallet App"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication & authorization endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
+      "name": "Categories",
+      "description": "Categories endpoints"
+    },
+    {
+      "name": "Statistics",
+      "description": "Statisctics endpoints"
+    },
+    {
+      "name": "Transactions",
+      "description": "Transactions endpoints"
+    }
+  ],
+  "paths": {
+    "/auth/registration": {
+      "post": {
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "tags": ["Auth"]
+      }
+    },
+    "/user/current": {
+      "get": {
+        "tags": ["User"]
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["Categories"]
+      }
+    },
+    "/statistics": {
+      "get": {
+        "tags": ["Statistics"]
+      }
+    },
+    "/transactions": {
+      "post": {
+        "tags": ["Transactions"]
+      },
+      "get": {
+        "tags": ["Transactions"]
+      }
+    }
+  }
+}
