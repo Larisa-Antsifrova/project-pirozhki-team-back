@@ -1,9 +1,9 @@
-require('colors');
-const bcrypt = require('bcryptjs');
-const { v4: uuid } = require('uuid');
-const UserModel = require('../models/user-model');
-const mailService = require('../services/mail-service');
-const tokenService = require('../services/token-service');
+require("colors");
+const bcrypt = require("bcryptjs");
+const { v4: uuid } = require("uuid");
+const UserModel = require("../models/user-model");
+const mailService = require("../services/mail-service");
+const tokenService = require("../services/token-service");
 
 class AuthRepositories {
   async registration(name, email, password) {
@@ -30,6 +30,31 @@ class AuthRepositories {
       id: newUser._id,
       name: newUser.name,
       email: newUser.email,
+    };
+
+    const tokens = tokenService.generateTokens({ ...payload });
+    await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+    return { ...tokens, user: payload };
+  }
+
+  async login(name, email, password) {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      //TODO: доделать, чтоб возвращалась ошибкой 400 и статусом BAD_REQUEST
+      throw new Error(`User with this email - ${email} was not found`);
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      //TODO: доделать, чтоб возвращалась ошибкой 400 и статусом BAD_REQUEST
+      throw new Error("Wrong credentials");
+    }
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
     };
 
     const tokens = tokenService.generateTokens({ ...payload });
