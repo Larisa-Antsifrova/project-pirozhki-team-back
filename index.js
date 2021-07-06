@@ -16,6 +16,7 @@ const categoriesRoutes = require('./router/categories-routes');
 const statisticsRoutes = require('./router/statistics-routes');
 const transactionsRoutes = require('./router/transactions-routes');
 // const userRoutes = require('./router/user-routes');
+const docsRoutes = require('./router/docs-routes');
 
 const PORT = process.env.PORT || Ports.DEFAULT;
 
@@ -32,6 +33,7 @@ app.use(categoriesRoutes);
 app.use(statisticsRoutes);
 app.use(transactionsRoutes);
 // app.use(userRoutes);
+app.use(docsRoutes);
 
 // Handling 404 Not found
 app.use((req, res) => {
