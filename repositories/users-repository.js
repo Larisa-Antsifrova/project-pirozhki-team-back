@@ -9,7 +9,7 @@ class AuthRepositories {
   async registration(name, email, password) {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      //TODO: доделать, чтоб возвращалась ошибкой 409 и статусом CONFLICT
+      //TODO: доделать, чтоб возвращалась ошибкой 409 и статусом CONFLICT в контроллере
       throw new Error(`User with this email - ${email} is already exist`);
     }
     const salt = await bcrypt.genSalt(10);
@@ -24,7 +24,7 @@ class AuthRepositories {
       activationLink,
     });
 
-    await mailService.sendActivationMail(email, activationLink);
+    await mailService.sendActivationMail(email, `${process.env.API_URL}/auth/verify/${activationLink}`);
 
     const payload = {
       id: newUser._id,

@@ -12,6 +12,7 @@ authRoutes.post('/registration', authController.registration);
 authRoutes.post('/login', authController.login);
 authRoutes.post('/logout', authController.logout);
 
+authRoutes.get('verify/:link', authController.verify);
 authRoutes.get('/users', authController.getUsers);
 
 module.exports = authRoutes;
