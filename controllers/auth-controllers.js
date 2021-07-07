@@ -71,7 +71,9 @@ class AuthController {
   //Test
   async getUsers(req, res, next) {
     try {
-      res.json({ message: "Hello auth router" });
+      const users = await authRepositories.getAllUsers();
+      return res.json(users);
+      // res.json({ message: "Hello auth router" });
     } catch (error) {
       next(error);
     }
