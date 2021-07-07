@@ -1,6 +1,9 @@
+const Categories = require('./categories');
+
 const calculateStatistics = transactions => {
   const result = transactions.reduce((statistics, transaction) => {
     const category = transaction.category;
+
     const categoryCount = statistics[category]
       ? {
           ...statistics[category],
@@ -11,6 +14,7 @@ const calculateStatistics = transactions => {
           category: transaction.category,
           income: transaction.income,
           sum: transaction.sum,
+          color: Categories.find(element => element.name === category).color,
         };
 
     return { ...statistics, [category]: categoryCount };
