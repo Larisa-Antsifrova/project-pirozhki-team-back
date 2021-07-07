@@ -113,7 +113,34 @@
     },
     "/transactions": {
       "post": {
-        "tags": ["Transactions"]
+        "tags": ["Transactions"],
+        "summary": "Creating a new transaction",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create transaction request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" }
+        }
       },
       "get": {
         "tags": ["Transactions"],
@@ -126,13 +153,12 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/transactionsSuccessResponse"
+                  "$ref": "#/components/schemas/getTransactionsSuccessResponse"
                 }
               }
             }
           },
-          "400": { "description": "Bad request response" },
-          "409": { "description": "Email is in use response" }
+          "400": { "description": "Bad request response" }
         }
       }
     }
@@ -196,7 +222,39 @@
           }
         }
       },
-      "transactionsSuccessResponse": {
+
+      "createTransactionRequest": {
+        "type": "object",
+        "required": ["date", "income", "category", "sum"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
+            "type": "integer",
+            "description": "Sum of transaction",
+            "example": 30
+          }
+        }
+      },
+      "createTransactionSuccessResponse": {
         "type": "object",
         "properties": {
           "status": {
@@ -211,7 +269,68 @@
           },
           "data": {
             "type": "object",
-            "description": "Payload with information about stansactions and balance totals",
+            "description": "Payload with information about newly created tansaction",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Transaction ID",
+                "example": "60e2fcb6e0801939c8016539"
+              },
+              "date": {
+                "type": "string",
+                "description": "Transaction's date indicated by user",
+                "example": "2021-07-05"
+              },
+              "income": {
+                "type": "boolean",
+                "description": "Is transaction income",
+                "example": false
+              },
+              "category": {
+                "type": "string",
+                "description": "Category of transaction",
+                "example": "Продукты"
+              },
+              "comment": {
+                "type": "string",
+                "description": "User's comment about transaction",
+                "example": "Ингредиенты для шакшуши"
+              },
+              "sum": {
+                "type": "integer",
+                "description": "Sum of transaction",
+                "example": 400
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date of entry creation",
+                "example": "2021-07-05T12:36:06.595Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date of entry update",
+                "example": "2021-07-05T12:36:06.595Z"
+              }
+            }
+          }
+        }
+      },
+      "getTransactionsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about tansactions and balance totals",
             "properties": {
               "allTransactions": {
                 "type": "array",
