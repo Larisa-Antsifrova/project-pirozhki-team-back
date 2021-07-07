@@ -73,7 +73,34 @@
     },
     "/auth/login": {
       "post": {
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "summary": "Logging in a user",
+        "parameters": [],
+        "security": [],
+        "requestBody": {
+          "description": "Login request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" }
+        }
       }
     },
     "/auth/logout": {
@@ -260,6 +287,22 @@
                 "format": "email"
               }
             }
+          }
+        }
+      },
+      "loginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
           }
         }
       },
