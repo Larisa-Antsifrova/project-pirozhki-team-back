@@ -61,7 +61,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/registrationSuccessResponse"
+                  "$ref": "#/components/schemas/authSuccessResponse"
                 }
               }
             }
@@ -94,7 +94,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/registrationSuccessResponse"
+                  "$ref": "#/components/schemas/authSuccessResponse"
                 }
               }
             }
@@ -266,7 +266,23 @@
           }
         }
       },
-      "registrationSuccessResponse": {
+      "loginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
+          }
+        }
+      },
+      "authSuccessResponse": {
         "type": "object",
         "properties": {
           "accessToken": {
@@ -302,22 +318,6 @@
           }
         }
       },
-      "loginRequest": {
-        "type": "object",
-        "required": ["email", "password"],
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User's email",
-            "format": "email"
-          },
-          "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "test123456"
-          }
-        }
-      },
       "getCategoriesSuccessResponse": {
         "type": "object",
         "properties": {
@@ -345,6 +345,11 @@
                   "type": "boolean",
                   "description": "Is category an income",
                   "example": true
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Color of the transaction category",
+                  "example": "#6e78e8"
                 }
               }
             }
@@ -357,31 +362,18 @@
             "categories": [
               {
                 "name": "Регулярный доход",
-                "income": true
-              },
-              {
-                "name": "Нерегулярный доход",
-                "income": true
-              },
-              {
-                "name": "Разное",
-                "income": false
+                "income": true,
+                "color": "#1b5e20"
               },
               {
                 "name": "Продукты",
-                "income": false
-              },
-              {
-                "name": "Товары для дома",
-                "income": false
+                "income": false,
+                "color": "#4a56e2"
               },
               {
                 "name": "Образование",
-                "income": false
-              },
-              {
-                "name": "Основные расходы",
-                "income": false
+                "income": false,
+                "color": "#c5baff"
               }
             ]
           }
@@ -423,6 +415,11 @@
                       "type": "integer",
                       "description": "Total amount of this type of transaction within given period",
                       "example": 500
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color of the transaction category",
+                      "example": "#6e78e8"
                     }
                   }
                 }
@@ -458,22 +455,26 @@
               {
                 "category": "Регулярный доход",
                 "income": true,
-                "sum": 1500
+                "sum": 1500,
+                "color": "#1b5e20"
               },
               {
                 "category": "Основные расходы",
                 "income": false,
-                "sum": 200
+                "sum": 200,
+                "color": "#fed057"
               },
               {
                 "category": "Машина",
                 "income": false,
-                "sum": 300
+                "sum": 300,
+                "color": "#6e78e8"
               },
               {
                 "category": "Продукты",
                 "income": false,
-                "sum": 400
+                "sum": 400,
+                "color": "#4a56e2"
               }
             ],
             "totals": {
