@@ -62,9 +62,39 @@ class AuthRepositories {
 
     return { ...tokens, user: payload };
   }
+
   async logout(refreshToken) {
     const token = await tokenService.removeToken(refreshToken);
+    //TODO: added status code 204 and msg NO_CONTENT
     return token;
+  }
+
+  async refresh(refreshToken) {
+    if (!refreshToken) {
+      //TODO: доделать, чтоб возвращалась ошибкой 401 и статусом UNAUTHORIZED
+      throw new Error("Email or password is wrong");
+    }
+
+    const userData = tokenService.refreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken);
+
+    if (!userData || !tokenFromDb) {
+      //TODO: доделать, чтоб возвращалась ошибкой 401 и статусом UNAUTHORIZED
+      throw new Error("Email or password is wrong");
+    }
+
+    const user = await UserModel.findById(userData.id);
+
+    const payload = {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    };
+
+    const tokens = tokenService.generateTokens({ ...payload });
+    await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+    return { ...tokens, user: payload };
   }
 }
 
