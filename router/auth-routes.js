@@ -11,6 +11,7 @@ const authController = require('../controllers/auth-controllers');
 authRoutes.post('/registration', authController.registration);
 authRoutes.post('/login', authController.login);
 authRoutes.post('/logout', authController.logout);
+authRoutes.get('/refresh', authController.refresh);
 
 authRoutes.get('/users', authController.getUsers);
 
