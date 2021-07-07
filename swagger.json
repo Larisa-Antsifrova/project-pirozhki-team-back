@@ -105,17 +105,29 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "summary": "Logging a user out",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
       }
     },
     "/auth/refresh": {
       "get": {
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "summary": "Refreshing a pair of tokens: refresh and access",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
       }
     },
     "/user/current": {
       "get": {
-        "tags": ["User"]
+        "tags": ["User"],
+        "summary": "Getting current user's information",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
       }
     },
     "/categories": {
