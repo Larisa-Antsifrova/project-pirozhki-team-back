@@ -75,7 +75,7 @@ class AuthRepositories {
       throw new Error("Email or password is wrong");
     }
 
-    const userData = tokenService.refreshToken(refreshToken);
+    const userData = tokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await tokenService.findToken(refreshToken);
 
     if (!userData || !tokenFromDb) {
