@@ -219,7 +219,16 @@
               }
             }
           },
-          "400": { "description": "Bad request response" }
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTransactionErrorResponse"
+                }
+              }
+            }
+          }
         }
       },
       "get": {
@@ -237,8 +246,7 @@
                 }
               }
             }
-          },
-          "400": { "description": "Bad request response" }
+          }
         }
       }
     }
@@ -574,6 +582,26 @@
                 "example": "2021-07-05T12:36:06.595Z"
               }
             }
+          }
+        }
+      },
+      "createTransactionErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'date' must be in YYYY-MM-DD format"
           }
         }
       },
