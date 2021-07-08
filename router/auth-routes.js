@@ -10,6 +10,6 @@ authRoutes.post('/login', authController.login);
 authRoutes.post('/logout', guard, authController.logout);
 authRoutes.get('/refresh', guard, authController.refresh);
 
-authRoutes.get('/users', guard, authController.getUsers); //test route
+
 
 module.exports = authRoutes;
