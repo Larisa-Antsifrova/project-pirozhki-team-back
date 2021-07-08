@@ -1,0 +1,763 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Wallet App",
+    "description": "Webb application for personal finances management."
+  },
+  "servers": [
+    {
+      "url": "https://awesome-wallet-app.herokuapp.com",
+      "description": "Production server for Wallet App"
+    },
+    {
+      "url": "http://localhost:8888",
+      "description": "Development server for Wallet App"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication & authorization endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User endpoints"
+    },
+    {
+      "name": "Categories",
+      "description": "Categories endpoints"
+    },
+    {
+      "name": "Statistics",
+      "description": "Statisctics endpoints"
+    },
+    {
+      "name": "Transactions",
+      "description": "Transactions endpoints"
+    }
+  ],
+  "paths": {
+    "/auth/registration": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Registration of a user",
+        "parameters": [],
+        "security": [],
+        "requestBody": {
+          "description": "Registration request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/registrationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" },
+          "409": { "description": "Email is in use response" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logging in a user",
+        "parameters": [],
+        "security": [],
+        "requestBody": {
+          "description": "Login request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Bad request response" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logging a user out",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Refreshing a pair of tokens: refresh and access",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
+      }
+    },
+    "/user/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Getting current user's information",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {}
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Getting all categories",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategoriesSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/statistics": {
+      "get": {
+        "tags": ["Statistics"],
+        "summary": "Getting statics for given period of time",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "startDate",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2021-07-01"
+            }
+          },
+          {
+            "in": "query",
+            "name": "endDate",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2021-08-01"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getStatisticsSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getStatisticsErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Creating a new transaction",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create transaction request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTransactionErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Getting all transactions of a user",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTransactionsSuccessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "registrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's name",
+            "example": "Test"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
+          }
+        }
+      },
+      "loginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
+          }
+        }
+      },
+      "authSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "Access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjU1NzYxOTR9.YbZLT2ATVet_yYlMDuPUy5x_xfYJ7AXMDljGRRgS1pk"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjgxNjA5OTR9.EXNWBeJ0kDpzf2rjrn6whU1cXItSGXnL117jLvJsoiE"
+          },
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's ID",
+                "example": "60e3680607be0344645c9f01"
+              },
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      },
+      "getCategoriesSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "Payload with an array of categories ojects",
+            "items": {
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Category of transaction",
+                  "example": "Регулярный доход"
+                },
+                "income": {
+                  "type": "boolean",
+                  "description": "Is category an income",
+                  "example": true
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Color of the transaction category",
+                  "example": "#6e78e8"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "categories": [
+              {
+                "name": "Регулярный доход",
+                "income": true,
+                "color": "#1b5e20"
+              },
+              {
+                "name": "Продукты",
+                "income": false,
+                "color": "#4a56e2"
+              },
+              {
+                "name": "Образование",
+                "income": false,
+                "color": "#c5baff"
+              }
+            ]
+          }
+        }
+      },
+      "getStatisticsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with statistics for given period and balance totals",
+            "properties": {
+              "statistics": {
+                "type": "array",
+                "description": "Array of statistics objects",
+                "items": {
+                  "properties": {
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Total amount of this type of transaction within given period",
+                      "example": 500
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color of the transaction category",
+                      "example": "#6e78e8"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income within given period",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses within given period",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance within given period",
+                    "example": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "statistics": [
+              {
+                "category": "Регулярный доход",
+                "income": true,
+                "sum": 1500,
+                "color": "#1b5e20"
+              },
+              {
+                "category": "Основные расходы",
+                "income": false,
+                "sum": 200,
+                "color": "#fed057"
+              },
+              {
+                "category": "Машина",
+                "income": false,
+                "sum": 300,
+                "color": "#6e78e8"
+              },
+              {
+                "category": "Продукты",
+                "income": false,
+                "sum": 400,
+                "color": "#4a56e2"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 900,
+              "balance": 600
+            }
+          }
+        }
+      },
+      "getStatisticsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'endDate' is required"
+          }
+        }
+      },
+      "createTransactionRequest": {
+        "type": "object",
+        "required": ["date", "income", "category", "sum"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
+            "type": "integer",
+            "description": "Sum of transaction",
+            "example": 30
+          }
+        }
+      },
+      "createTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about newly created tansaction",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Transaction ID",
+                "example": "60e2fcb6e0801939c8016539"
+              },
+              "date": {
+                "type": "string",
+                "description": "Transaction's date indicated by user",
+                "example": "2021-07-05"
+              },
+              "income": {
+                "type": "boolean",
+                "description": "Is transaction income",
+                "example": false
+              },
+              "category": {
+                "type": "string",
+                "description": "Category of transaction",
+                "example": "Продукты"
+              },
+              "comment": {
+                "type": "string",
+                "description": "User's comment about transaction",
+                "example": "Ингредиенты для шакшуши"
+              },
+              "sum": {
+                "type": "integer",
+                "description": "Sum of transaction",
+                "example": 400
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date of entry creation",
+                "example": "2021-07-05T12:36:06.595Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date of entry update",
+                "example": "2021-07-05T12:36:06.595Z"
+              }
+            }
+          }
+        }
+      },
+      "createTransactionErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'date' must be in YYYY-MM-DD format"
+          }
+        }
+      },
+      "getTransactionsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about tansactions and balance totals",
+            "properties": {
+              "allTransactions": {
+                "type": "array",
+                "description": "Array of transactions objects",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Transaction ID",
+                      "example": "60e2fcb6e0801939c8016539"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "Date indicated by the user",
+                      "example": "2021-05-04T21:00:00.000Z"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "description": "Comment for the transaction",
+                      "example": "ЗП Джуна"
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Amount of the transaction",
+                      "example": 500
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "Date of entry creation",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "Date of entry update",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance",
+                    "example": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "allTransactions": [
+              {
+                "id": "60e2fcb6e0801939c8016539",
+                "category": "Регулярный доход",
+                "income": true,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "ЗП Джуна",
+                "sum": 500,
+                "createdAt": "2021-07-05T12:36:06.595Z",
+                "updatedAt": "2021-07-05T12:36:06.595Z"
+              },
+              {
+                "id": "60e2fccce0801939c801653b",
+                "category": "Основные расходы",
+                "income": false,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "Еда",
+                "sum": 200,
+                "createdAt": "2021-07-05T12:36:28.570Z",
+                "updatedAt": "2021-07-05T12:36:28.570Z"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 200,
+              "balance": 300
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  }
+}
