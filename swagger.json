@@ -66,8 +66,26 @@
               }
             }
           },
-          "400": { "description": "Bad request response" },
-          "409": { "description": "Email is in use response" }
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email is in use response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationConflictErrorResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -428,6 +446,46 @@
                 "format": "email"
               }
             }
+          }
+        }
+      },
+      "registrationBadRequestErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'email' must be a valid email"
+          }
+        }
+      },
+      "registrationConflictErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 409
+          },
+          "message": {
+            "type": "string",
+            "description": "Conflict error message",
+            "example": "This email is already in use."
           }
         }
       },
