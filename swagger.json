@@ -109,7 +109,22 @@
         "summary": "Logging a user out",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "204": {
+            "description": "Success logout response",
+            "content": {}
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/auth/refresh": {
