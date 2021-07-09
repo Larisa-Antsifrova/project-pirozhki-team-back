@@ -146,6 +146,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -195,6 +205,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -236,6 +256,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -251,6 +281,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/getTransactionsSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
                 }
               }
             }
@@ -752,6 +792,26 @@
               "expense": 200,
               "balance": 300
             }
+          }
+        }
+      },
+      "unauthorizedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "description": "Unauthorized error message",
+            "example": "Not authorized."
           }
         }
       }
