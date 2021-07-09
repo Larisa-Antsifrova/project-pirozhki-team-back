@@ -6,7 +6,6 @@ const Statuses = require('../helpers/statuses');
 const guard = (req, res, next) => {
   try {
     const headerAuth = req.headers.authorization;
-    // console.log(headerAuth); // консолим токен юзера для себя
 
     const accessToken = headerAuth?.split(' ')[1];
 
