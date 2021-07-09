@@ -1,22 +1,21 @@
 const Transaction = require('../models/transaction-model');
 
 class Transactions {
-  async getAllTransactions() {
-    // TODO: Add search by owner ID
-    return await Transaction.find();
+  async getAllTransactions(ownerId) {
+    return await Transaction.find({ owner: ownerId });
   }
 
-  async getAllTransactionsWithinPeriod(startDate, endDate) {
-    // TODO: Add search by owner ID
+  async getAllTransactionsWithinPeriod(ownerId, startDate, endDate) {
     return await Transaction.find({
-      date: { $gte: startDate, $lte: endDate },
+      owner: ownerId,
+      date: { $gte: startDate, $lte: endDate }
     });
   }
 
-  async addTransaction(transaction) {
-    // TODO: Add owner field with current user ID
+  async addTransaction(id, transaction) {
     return await Transaction.create({
       ...transaction,
+      owner: id
     });
   }
 }
