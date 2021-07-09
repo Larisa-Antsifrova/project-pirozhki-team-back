@@ -85,6 +85,16 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Rate limit exceeded response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/limitRateExceededResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -123,6 +133,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/loginBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/limitRateExceededResponse"
                 }
               }
             }
@@ -987,6 +1007,26 @@
             "type": "string",
             "description": "Unauthorized error message",
             "example": "Not authorized."
+          }
+        }
+      },
+      "limitRateExceededResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 429
+          },
+          "message": {
+            "type": "string",
+            "description": "Rate limit exceeded error message",
+            "example": "Too many requests. Please try again later."
           }
         }
       }
