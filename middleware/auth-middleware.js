@@ -1,14 +1,14 @@
-require("colors");
-const tokenService = require("../services/token-service");
-const HttpCodes = require("../helpers/http-codes");
-const Statuses = require("../helpers/statuses");
+require('colors');
+const tokenService = require('../services/token-service');
+const HttpCodes = require('../helpers/http-codes');
+const Statuses = require('../helpers/statuses');
 
 const guard = (req, res, next) => {
   try {
     const headerAuth = req.headers.authorization;
-    console.log(headerAuth); // консолим токен юзера для себя
+    // console.log(headerAuth); // консолим токен юзера для себя
 
-    const accessToken = headerAuth?.split(" ")[1];
+    const accessToken = headerAuth?.split(' ')[1];
 
     const userData = tokenService.validateAccessToken(accessToken);
 
@@ -16,7 +16,7 @@ const guard = (req, res, next) => {
       return res.status(HttpCodes.UNAUTHORIZED).json({
         status: Statuses.ERROR,
         code: HttpCodes.UNAUTHORIZED,
-        message: "Not authorized.",
+        message: 'Not authorized.'
       });
     }
 

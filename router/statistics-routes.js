@@ -1,6 +1,7 @@
 const { Router } = require('express');
+const guard = require('../middleware/auth-middleware');
 const {
-  validateStatisticsQuery,
+  validateStatisticsQuery
 } = require('../validaton/statistics-validation');
 const Controllers = require('../controllers/statistics-controllers');
 
@@ -8,8 +9,9 @@ const statisticsRoutes = Router();
 
 statisticsRoutes.get(
   '/statistics',
+  guard,
   validateStatisticsQuery,
-  Controllers.getStatistics,
+  Controllers.getStatistics
 );
 
 module.exports = statisticsRoutes;
