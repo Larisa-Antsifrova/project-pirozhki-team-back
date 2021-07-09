@@ -40,16 +40,16 @@ The endpoints are documented here:
 
 | Tool/Resource                                                          | Purpose                                                    |
 | :--------------------------------------------------------------------- | :--------------------------------------------------------- |
-| JS/ NodeJS                                                             | Primary project language                                   |
-| [Express](https://expressjs.com/)                                      | Web application framework to build a server                |
-| [helmet](https://www.npmjs.com/package/helmet)                         | Secures the server                                         |
-| [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) | Sets limits on the amount of requests to certain endpoints |
-| [Joi](https://joi.dev/api/)                                            | Validates the incoming data/parameters                     |
-| [Postman](https://www.postman.com/)                                    | Facilitates HTTP requests checks                           |
 | [Axios](https://www.npmjs.com/package/axios)                           | Facilitates fetch requests to external services            |
 | [bcryptjs](https://www.npmjs.com/package/bcryptjs)                     | Hashes passwords                                           |
+| [Express](https://expressjs.com/)                                      | Web application framework to build a server                |
+| [express-rate-limit](https://www.npmjs.com/package/express-rate-limit) | Sets limits on the amount of requests to certain endpoints |
+| [helmet](https://www.npmjs.com/package/helmet)                         | Secures the server                                         |
+| [Joi](https://joi.dev/api/)                                            | Validates the incoming data/parameters                     |
+| JS/ NodeJS                                                             | Primary project language                                   |
 | [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)             | Generates, signs, verifies JWT access and refresh tokens   |
 | [MongoDB](https://www.mongodb.com/)                                    | Primary database                                           |
 | [Mongoose](https://mongoosejs.com/)                                    | MongoDB ODM for NodeJS                                     |
-| [Swagger/OpenAPI](https://www.npmjs.com/package/swagger-ui-express)    | Used to generate server's documentation                    |
 | [Nodemailer](https://nodemailer.com/about/)                            | Primary Email service                                      |
+| [Postman](https://www.postman.com/)                                    | Facilitates HTTP requests checks                           |
+| [Swagger/OpenAPI](https://www.npmjs.com/package/swagger-ui-express)    | Used to generate server's documentation                    |
