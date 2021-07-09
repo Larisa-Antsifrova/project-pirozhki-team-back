@@ -1,6 +1,6 @@
 ![Banner](./tools-banner.png)
 
-# Wallet App - back
+# Wallet App: Web Server Application
 
 Graduation Team Project.
 
