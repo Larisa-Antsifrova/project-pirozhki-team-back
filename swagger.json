@@ -118,7 +118,28 @@
         "summary": "Refreshing a pair of tokens: refresh and access",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/user/current": {
