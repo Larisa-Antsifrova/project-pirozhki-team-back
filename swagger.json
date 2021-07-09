@@ -127,7 +127,28 @@
         "summary": "Getting current user's information",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/currentUserSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/categories": {
@@ -368,6 +389,37 @@
               "email": {
                 "type": "string",
                 "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      },
+      "currentUserSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with current user basic info",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Awesome Guest"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
                 "format": "email"
               }
             }
