@@ -1,7 +1,7 @@
 require("colors");
 const authRepositories = require("../repositories/users-repository");
 const HttpCodes = require("../helpers/http-codes");
-
+const Statuses = require("../helpers/statuses");
 class AuthController {
   //User registration
   async registration(req, res, next) {
@@ -16,7 +16,11 @@ class AuthController {
         httpOnly: true,
       });
 
-      return res.json(userData);
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { userData },
+      });
     } catch (error) {
       next(error);
     }

@@ -6,7 +6,11 @@ class UserController {
     try {
       console.log(req.user);
       const { name, email } = req.user;
-      return res.json({ status: Statuses.SUCCESS, code: HttpCodes.OK, data: { name, email } });
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { name, email },
+      });
     } catch (error) {
       next(error);
     }
