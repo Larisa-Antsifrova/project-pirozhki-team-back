@@ -2,9 +2,9 @@ const Joi = require("joi");
 const HttpCodes = require("../helpers/http-codes");
 
 const schemaCreateUser = Joi.object({
-  password: Joi.string().min(5).required(),
-  email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  name: Joi.string().trim().optional(),
+  password: Joi.string().trim().min(6).max(20).required(),
+  email: Joi.string().trim().email({ minDomainSegments: 2 }).required(),
+  name: Joi.string().trim().min(1).max(30).optional(),
 });
 
 const validateSchema = async (schema, obj, next) => {
