@@ -1,4 +1,3 @@
-require("colors");
 const bcrypt = require("bcryptjs");
 const { v4: uuid } = require("uuid");
 const UserModel = require("../models/user-model");
@@ -9,8 +8,7 @@ class AuthRepositories {
   async registration(name, email, password) {
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      //TODO: доделать, чтоб возвращалась ошибкой 409 и статусом CONFLICT
-      throw new Error(`User with this email - ${email} is already exist`);
+      throw new Error(`User with this email is already exist`);
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -41,13 +39,11 @@ class AuthRepositories {
   async login(name, email, password) {
     const user = await UserModel.findOne({ email });
     if (!user) {
-      //TODO: доделать, чтоб возвращалась ошибкой 400 и статусом BAD_REQUEST
-      throw new Error(`User with this email - ${email} was not found`);
+      throw new Error(`User with this email was not found`);
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      //TODO: доделать, чтоб возвращалась ошибкой 400 и статусом BAD_REQUEST
       throw new Error("Wrong credentials");
     }
 
@@ -65,13 +61,11 @@ class AuthRepositories {
 
   async logout(refreshToken) {
     const token = await tokenService.removeToken(refreshToken);
-    //TODO: added status code 204 and msg NO_CONTENT
     return token;
   }
 
   async refresh(refreshToken) {
     if (!refreshToken) {
-      //TODO: доделать, чтоб возвращалась ошибкой 401 и статусом UNAUTHORIZED
       throw new Error("Email or password is wrong");
     }
 
@@ -79,7 +73,6 @@ class AuthRepositories {
     const tokenFromDb = await tokenService.findToken(refreshToken);
 
     if (!userData || !tokenFromDb) {
-      //TODO: доделать, чтоб возвращалась ошибкой 401 и статусом UNAUTHORIZED
       throw new Error("Email or password is wrong");
     }
 
