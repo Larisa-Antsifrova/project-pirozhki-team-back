@@ -6,15 +6,15 @@ const calculateTotals = require('../helpers/total-calculator');
 class TransactionControllers {
   async getAllTransactions(req, res, next) {
     try {
-      // TODO: refactor to getting All transactions of a specific user
+      const { id } = req.user;
       // TODO: paginate all transactions by 5 and sort by date
-      const allTransactions = await Transactions.getAllTransactions();
+      const allTransactions = await Transactions.getAllTransactions(id);
       const totals = calculateTotals(allTransactions);
 
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { allTransactions, totals },
+        data: { allTransactions, totals }
       });
     } catch (error) {
       next(error);
@@ -23,14 +23,18 @@ class TransactionControllers {
 
   async addTransaction(req, res, next) {
     try {
-      // TODO: Add owner field with current users ID
       const transaction = req.body;
-      const addedTransaction = await Transactions.addTransaction(transaction);
+      const { id } = req.user;
+
+      const addedTransaction = await Transactions.addTransaction(
+        id,
+        transaction
+      );
 
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: addedTransaction,
+        data: addedTransaction
       });
     } catch (error) {
       next(error);
