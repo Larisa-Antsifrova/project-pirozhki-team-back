@@ -1,4 +1,3 @@
-require("colors");
 const authRepositories = require("../repositories/users-repository");
 const HttpCodes = require("../helpers/http-codes");
 const Statuses = require("../helpers/statuses");
@@ -22,6 +21,9 @@ class AuthController {
         data: { userData },
       });
     } catch (error) {
+      if (error.message === `User with this email is already exist`) {
+        error.status = HttpCodes.CONFLICT;
+      }
       next(error);
     }
   }
@@ -41,6 +43,12 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
+      if (error.message === `User with this email was not found`) {
+        error.status = HttpCodes.NOT_FOUND;
+      }
+      if (error.message === `Wrong credentials`) {
+        error.status = HttpCodes.BAD_REQUEST;
+      }
       next(error);
     }
   }
@@ -49,9 +57,9 @@ class AuthController {
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
-      const token = await authRepositories.logout(refreshToken);
+      await authRepositories.logout(refreshToken);
       res.clearCookie("refreshToken");
-      return res.json(token);
+      return res.status(HttpCodes.NO_CONTENT).json({});
     } catch (error) {
       next(error);
     }
@@ -68,6 +76,9 @@ class AuthController {
       });
       return res.json(userData);
     } catch (error) {
+      if (error.message === `Email or password is wrong`) {
+        error.status = HttpCodes.UNAUTHORIZED;
+      }
       next(error);
     }
   }
