@@ -5,10 +5,11 @@ const Statuses = require('../helpers/statuses');
 class CategoriesControllers {
   async getAllCategories(req, res, next) {
     try {
+      // TODO: if we decide upon own categories, add owner ID
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { categories: Categories },
+        data: { categories: Categories }
       });
     } catch (error) {
       next(error);

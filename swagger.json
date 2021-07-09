@@ -66,8 +66,36 @@
               }
             }
           },
-          "400": { "description": "Bad request response" },
-          "409": { "description": "Email is in use response" }
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email is in use response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/registrationConflictErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/limitRateExceededResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -89,7 +117,7 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "Success response",
             "content": {
               "application/json": {
@@ -99,7 +127,26 @@
               }
             }
           },
-          "400": { "description": "Bad request response" }
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/limitRateExceededResponse"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -109,7 +156,22 @@
         "summary": "Logging a user out",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "204": {
+            "description": "Success logout response",
+            "content": {}
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/auth/refresh": {
@@ -118,7 +180,28 @@
         "summary": "Refreshing a pair of tokens: refresh and access",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/user/current": {
@@ -127,7 +210,28 @@
         "summary": "Getting current user's information",
         "parameters": [],
         "security": [{ "Bearer": [] }],
-        "responses": {}
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/currentUserSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/categories": {
@@ -143,6 +247,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/getCategoriesSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
                 }
               }
             }
@@ -195,6 +309,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -236,6 +360,16 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -251,6 +385,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/getTransactionsSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
                 }
               }
             }
@@ -328,6 +472,97 @@
               "email": {
                 "type": "string",
                 "description": "User's email",
+                "format": "email"
+              }
+            }
+          }
+        }
+      },
+      "registrationBadRequestErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'email' must be a valid email"
+          }
+        }
+      },
+      "registrationConflictErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 409
+          },
+          "message": {
+            "type": "string",
+            "description": "Conflict error message",
+            "example": "This email is already in use."
+          }
+        }
+      },
+      "loginBadRequestErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Login error message",
+            "example": "Invalid credentials."
+          }
+        }
+      },
+      "currentUserSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with current user basic info",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "User name",
+                "example": "Awesome Guest"
+              },
+              "email": {
+                "type": "string",
+                "description": "User email",
                 "format": "email"
               }
             }
@@ -752,6 +987,46 @@
               "expense": 200,
               "balance": 300
             }
+          }
+        }
+      },
+      "unauthorizedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "description": "Unauthorized error message",
+            "example": "Not authorized."
+          }
+        }
+      },
+      "limitRateExceededResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 429
+          },
+          "message": {
+            "type": "string",
+            "description": "Rate limit exceeded error message",
+            "example": "Too many requests. Please try again later."
           }
         }
       }

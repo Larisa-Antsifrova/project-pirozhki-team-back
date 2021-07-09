@@ -8,10 +8,14 @@ class StatisticsControllers {
   async getStatistics(req, res, next) {
     try {
       const { startDate, endDate } = req.query;
+      const { id } = req.user;
 
-      // TODO: Refactore with owner ID
       const allTransactionsWithinPeriod =
-        await Transactions.getAllTransactionsWithinPeriod(startDate, endDate);
+        await Transactions.getAllTransactionsWithinPeriod(
+          id,
+          startDate,
+          endDate
+        );
 
       const statistics = calculateStatistics(allTransactionsWithinPeriod);
       const totals = calculateTotals(allTransactionsWithinPeriod);
@@ -19,7 +23,7 @@ class StatisticsControllers {
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { statistics, totals },
+        data: { statistics, totals }
       });
     } catch (error) {
       next(error);
