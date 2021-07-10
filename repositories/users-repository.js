@@ -1,8 +1,9 @@
 const UserModel = require('../models/user-model');
-const tokenService = require('../services/token-service');
 
 class Users {
-  async getAllUsers() {}
+  async getUserById(id) {
+    return await UserModel.findById(id);
+  }
 
   async getUserByEmail(email) {
     return await UserModel.findOne({ email });
@@ -10,32 +11,6 @@ class Users {
 
   async createNewUser(user) {
     return await UserModel.create(user);
-  }
-
-  async refresh(refreshToken) {
-    if (!refreshToken) {
-      throw new Error('Email or password is wrong');
-    }
-
-    const userData = tokenService.validateRefreshToken(refreshToken);
-    const tokenFromDb = await tokenService.findToken(refreshToken);
-
-    if (!userData || !tokenFromDb) {
-      throw new Error('Email or password is wrong');
-    }
-
-    const user = await UserModel.findById(userData.id);
-
-    const payload = {
-      id: user._id,
-      name: user.name,
-      email: user.email
-    };
-
-    const tokens = tokenService.generateTokens({ ...payload });
-    await tokenService.saveToken(payload.id, tokens.refreshToken);
-
-    return { ...tokens, user: payload };
   }
 }
 

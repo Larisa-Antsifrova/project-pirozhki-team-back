@@ -130,16 +130,50 @@ class AuthController {
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
-      const userData = await authRepositories.refresh(refreshToken);
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+
+      if (!refreshToken) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const userData = tokenService.validateRefreshToken(refreshToken);
+      const tokenFromDb = await tokenService.findToken(refreshToken);
+
+      if (!userData || !tokenFromDb) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const user = await Users.getUserById(userData.id);
+
+      const payload = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+      //set refreshToken to cookies
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         httpOnly: true
       });
-      return res.json(userData);
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { ...tokens, user: payload }
+      });
     } catch (error) {
-      if (error.message === `Email or password is wrong`) {
-        error.status = HttpCodes.UNAUTHORIZED;
-      }
       next(error);
     }
   }
