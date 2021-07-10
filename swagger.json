@@ -410,6 +410,16 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/queryParamsErrorResponse"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Unathorized error response",
             "content": {
@@ -1075,6 +1085,26 @@
               "expense": 200,
               "balance": 300
             }
+          }
+        }
+      },
+      "queryParamsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'limit' must be a number"
           }
         }
       },
