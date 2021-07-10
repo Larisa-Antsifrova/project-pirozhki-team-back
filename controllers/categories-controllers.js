@@ -18,9 +18,9 @@ class CategoriesControllers {
 
   async getCategories(req, res, next) {
     try {
-      const { id } = req.user;
+      const ownerId = req.user.id;
 
-      const categories = await Categories.getAllCategories(id);
+      const categories = await Categories.getAllCategories(ownerId);
 
       return res.json({
         status: Statuses.SUCCESS,
@@ -59,12 +59,46 @@ class CategoriesControllers {
 
   async addCategory(req, res, next) {
     try {
+      const category = req.body;
+      const ownerId = req.user.id;
+
+      const addedCategory = await Categories.addCategory(ownerId, category);
+
+      return res.status(HttpCodes.CREATED).json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.CREATED,
+        data: addedCategory,
+      });
     } catch (error) {
       next(error);
     }
   }
+
   async updateCategoryById(req, res, next) {
     try {
+      const ownerId = req.user.id;
+      const categoryId = req.params.categoryId;
+      const updates = req.body;
+
+      const updatedCategory = await Categories.updateCategory(
+        ownerId,
+        categoryId,
+        updates,
+      );
+
+      if (!updatedCategory) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: "Category was not found.",
+        });
+      }
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { category: updatedCategory },
+      });
     } catch (error) {
       next(error);
     }

@@ -13,11 +13,13 @@ const categorySchema = new Schema(
     },
     color: {
       type: String,
+      required: [true, "Category color is required."],
       default: "#009688",
     },
     icon: {
       type: String,
-      default: "money-icon",
+      required: [true, "Category icon is required."],
+      default: "pig-icon",
     },
     owner: {
       type: Schema.Types.ObjectId,
