@@ -44,7 +44,7 @@ class TransactionControllers {
         });
       }
 
-      return res.status(HttpCodes.OK).json({
+      return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
         data: { transaction },
@@ -64,7 +64,7 @@ class TransactionControllers {
         transaction,
       );
 
-      return res.json({
+      return res.status(HttpCodes.CREATED).json({
         status: Statuses.SUCCESS,
         code: HttpCodes.CREATED,
         data: addedTransaction,
