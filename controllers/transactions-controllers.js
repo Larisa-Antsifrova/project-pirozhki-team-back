@@ -45,6 +45,10 @@ class TransactionControllers {
       next(error);
     }
   }
+
+  async getTransactionById(req, res, next) {}
+  async updateTransactionById(req, res, next) {}
+  async deleteTransactionById(req, res, next) {}
 }
 
 module.exports = new TransactionControllers();
