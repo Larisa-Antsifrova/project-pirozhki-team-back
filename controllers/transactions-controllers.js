@@ -7,14 +7,17 @@ class TransactionControllers {
   async getAllTransactions(req, res, next) {
     try {
       const { id } = req.user;
-      // TODO: paginate all transactions by 5 and sort by date
-      const allTransactions = await Transactions.getAllTransactions(id);
-      const totals = calculateTotals(allTransactions);
+      const query = req.query;
+
+      const { transactions, ...pagination } =
+        await Transactions.getAllTransactions(id, query);
+
+      const totals = calculateTotals(transactions);
 
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.CREATED,
-        data: { allTransactions, totals }
+        data: { transactions, pagination, totals }
       });
     } catch (error) {
       next(error);
