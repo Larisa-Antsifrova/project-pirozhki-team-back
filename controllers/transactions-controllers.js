@@ -106,6 +106,27 @@ class TransactionControllers {
 
   async deleteTransactionById(req, res, next) {
     try {
+      const ownerId = req.user.id;
+      const transactionId = req.params.transactionId;
+
+      const deletedTransaction = await Transactions.removeTransaction(
+        ownerId,
+        transactionId
+      );
+
+      if (!deletedTransaction) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: 'Transaction was not found.'
+        });
+      }
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        message: 'Transaction was successfully deleted.'
+      });
     } catch (error) {
       next(error);
     }

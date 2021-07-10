@@ -49,6 +49,13 @@ class Transactions {
       { new: true }
     );
   }
+
+  async removeTransaction(ownerId, transactionId) {
+    return await Transaction.findOneAndDelete({
+      owner: ownerId,
+      _id: transactionId
+    });
+  }
 }
 
 module.exports = new Transactions();
