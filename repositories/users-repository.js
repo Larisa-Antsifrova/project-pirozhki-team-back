@@ -12,11 +12,6 @@ class Users {
     return await UserModel.create(user);
   }
 
-  async logout(refreshToken) {
-    const token = await tokenService.removeToken(refreshToken);
-    return token;
-  }
-
   async refresh(refreshToken) {
     if (!refreshToken) {
       throw new Error('Email or password is wrong');

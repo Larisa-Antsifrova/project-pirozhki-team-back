@@ -114,19 +114,19 @@ class AuthController {
     }
   }
 
-  //User logout
   async logout(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
-      await authRepositories.logout(refreshToken);
+      await tokenService.removeToken(refreshToken);
+
       res.clearCookie('refreshToken');
+
       return res.status(HttpCodes.NO_CONTENT).json({});
     } catch (error) {
       next(error);
     }
   }
 
-  // Refresh token
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
