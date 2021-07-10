@@ -106,6 +106,27 @@ class CategoriesControllers {
 
   async deleteCategoryById(req, res, next) {
     try {
+      const ownerId = req.user.id;
+      const categoryId = req.params.categoryId;
+
+      const deletedCategory = await Categories.removeCategory(
+        ownerId,
+        categoryId,
+      );
+
+      if (!deletedCategory) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: "Category was not found.",
+        });
+      }
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        message: "Category was successfully deleted.",
+      });
     } catch (error) {
       next(error);
     }
