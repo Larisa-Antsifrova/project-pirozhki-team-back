@@ -1,7 +1,7 @@
-const Transactions = require('../repositories/transactions-repository');
-const HttpCodes = require('../helpers/http-codes');
-const Statuses = require('../helpers/statuses');
-const calculateTotals = require('../helpers/total-calculator');
+const Transactions = require("../repositories/transactions-repository");
+const HttpCodes = require("../helpers/http-codes");
+const Statuses = require("../helpers/statuses");
+const calculateTotals = require("../helpers/total-calculator");
 
 class TransactionControllers {
   async getTransactions(req, res, next) {
@@ -16,10 +16,10 @@ class TransactionControllers {
 
       const totals = calculateTotals(allTransactions);
 
-      res.json({
+      return res.json({
         status: Statuses.SUCCESS,
-        code: HttpCodes.CREATED,
-        data: { transactions, pagination, totals }
+        code: HttpCodes.OK,
+        data: { transactions, pagination, totals },
       });
     } catch (error) {
       next(error);
@@ -33,21 +33,21 @@ class TransactionControllers {
 
       const [transaction] = await Transactions.getTransactionById(
         ownerId,
-        transactionId
+        transactionId,
       );
 
       if (!transaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: 'Transaction was not found.'
+          message: "Transaction was not found.",
         });
       }
 
       return res.status(HttpCodes.OK).json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { transaction }
+        data: { transaction },
       });
     } catch (error) {
       next(error);
@@ -61,13 +61,13 @@ class TransactionControllers {
 
       const addedTransaction = await Transactions.addTransaction(
         id,
-        transaction
+        transaction,
       );
 
-      res.json({
+      return res.json({
         status: Statuses.SUCCESS,
-        code: HttpCodes.OK,
-        data: addedTransaction
+        code: HttpCodes.CREATED,
+        data: addedTransaction,
       });
     } catch (error) {
       next(error);
@@ -83,21 +83,21 @@ class TransactionControllers {
       const updatedTransaction = await Transactions.updateTransaction(
         ownerId,
         transactionId,
-        updates
+        updates,
       );
 
       if (!updatedTransaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: 'Transaction was not found.'
+          message: "Transaction was not found.",
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { transaction: updatedTransaction }
+        data: { transaction: updatedTransaction },
       });
     } catch (error) {
       next(error);
@@ -111,21 +111,21 @@ class TransactionControllers {
 
       const deletedTransaction = await Transactions.removeTransaction(
         ownerId,
-        transactionId
+        transactionId,
       );
 
       if (!deletedTransaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: 'Transaction was not found.'
+          message: "Transaction was not found.",
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        message: 'Transaction was successfully deleted.'
+        message: "Transaction was successfully deleted.",
       });
     } catch (error) {
       next(error);
