@@ -3,14 +3,47 @@ const HttpCodes = require('../helpers/http-codes');
 const Statuses = require('../helpers/statuses');
 
 class CategoriesControllers {
-  async getAllCategories(req, res, next) {
+  getHardCodedCategories(req, res, next) {
     try {
-      // TODO: if we decide upon own categories, add owner ID
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
         data: { categories: Categories }
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getCategories(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getCategoryById(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addCategory(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
+  async updateCategoryById(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteCategoryById(req, res, next) {
+    try {
     } catch (error) {
       next(error);
     }
