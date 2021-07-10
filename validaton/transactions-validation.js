@@ -15,6 +15,11 @@ const createTransactionSchema = Joi.object({
   sum: Joi.number().min(0).required()
 });
 
+const paginateTransactionSchema = Joi.object({
+  limit: Joi.number().min(0).optional(),
+  offset: Joi.number().min(0).optional()
+});
+
 const validateRequestAgainstSchema = async (schema, request, next) => {
   try {
     await schema.validateAsync(request);
@@ -32,6 +37,13 @@ module.exports = {
     return validateRequestAgainstSchema(
       createTransactionSchema,
       req.body,
+      next
+    );
+  },
+  validatePaginationQueryParams: (req, _res, next) => {
+    return validateRequestAgainstSchema(
+      paginateTransactionSchema,
+      req.query,
       next
     );
   }
