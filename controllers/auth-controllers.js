@@ -45,7 +45,7 @@ class AuthController {
       const tokens = tokenService.generateTokens({ ...payload });
       await tokenService.saveToken(payload.id, tokens.refreshToken);
 
-      //set in cookies refreshToken
+      //set refreshToken to cookies
       res.cookie('refreshToken', tokens.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         httpOnly: true
@@ -61,27 +61,55 @@ class AuthController {
     }
   }
 
-  //User login
   async login(req, res, next) {
     try {
-      const { name, email, password } = req.body;
+      const { email, password } = req.body;
 
-      const userData = await authRepositories.login(name, email, password);
+      const candidate = await Users.getUserByEmail(email);
 
-      //set in cookies refreshToken
-      res.cookie('refreshToken', userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+      if (!candidate) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const isPasswordCorret = await bcrypt.compare(
+        password,
+        candidate.password
+      );
+
+      if (!isPasswordCorret) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const payload = {
+        id: candidate._id,
+        name: candidate.name,
+        email: candidate.email,
+        isVerified: candidate.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+      //set refreshToken to cookies
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         httpOnly: true
       });
 
-      return res.json(userData);
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { ...tokens, user: payload }
+      });
     } catch (error) {
-      if (error.message === `User with this email was not found`) {
-        error.status = HttpCodes.NOT_FOUND;
-      }
-      if (error.message === `Wrong credentials`) {
-        error.status = HttpCodes.BAD_REQUEST;
-      }
       next(error);
     }
   }
