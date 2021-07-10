@@ -1,8 +1,23 @@
 const Transaction = require('../models/transaction-model');
 
 class Transactions {
-  async getAllTransactions(ownerId) {
-    return await Transaction.find({ owner: ownerId });
+  async getAllTransactions(ownerId, query) {
+    const { limit = 5, offset = 0 } = query;
+
+    const labels = {
+      docs: 'transactions',
+      totalDocs: 'totalTransactions',
+      page: 'currentPage'
+    };
+
+    const options = {
+      limit,
+      offset,
+      sort: { date: -1 },
+      customLabels: labels
+    };
+
+    return await Transaction.paginate({ owner: ownerId }, options);
   }
 
   async getAllTransactionsWithinPeriod(ownerId, startDate, endDate) {
