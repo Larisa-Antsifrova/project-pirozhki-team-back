@@ -1,7 +1,11 @@
 const Transaction = require('../models/transaction-model');
 
 class Transactions {
-  async getAllTransactions(ownerId, query) {
+  async getAllTransactions(ownerId) {
+    return await Transaction.find({ owner: ownerId });
+  }
+
+  async getPaginatedTransactions(ownerId, query) {
     const { limit = 5, offset = 0 } = query;
 
     const labels = {

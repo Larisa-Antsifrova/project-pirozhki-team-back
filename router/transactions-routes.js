@@ -12,7 +12,7 @@ transactionsRoutes.get(
   '/transactions',
   guard,
   validatePaginationQueryParams,
-  Controllers.getAllTransactions
+  Controllers.getTransactions
 );
 
 transactionsRoutes.post(

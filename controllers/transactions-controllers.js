@@ -4,15 +4,17 @@ const Statuses = require('../helpers/statuses');
 const calculateTotals = require('../helpers/total-calculator');
 
 class TransactionControllers {
-  async getAllTransactions(req, res, next) {
+  async getTransactions(req, res, next) {
     try {
       const { id } = req.user;
       const query = req.query;
 
       const { transactions, ...pagination } =
-        await Transactions.getAllTransactions(id, query);
+        await Transactions.getPaginatedTransactions(id, query);
 
-      const totals = calculateTotals(transactions);
+      const allTransactions = await Transactions.getAllTransactions(id);
+
+      const totals = calculateTotals(allTransactions);
 
       res.json({
         status: Statuses.SUCCESS,
