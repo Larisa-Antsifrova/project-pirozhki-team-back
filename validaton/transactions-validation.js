@@ -27,8 +27,12 @@ const validateRequestAgainstSchema = async (schema, request, next) => {
   }
 };
 
-const validateCreatedTransaction = (req, res, next) => {
-  return validateRequestAgainstSchema(createTransactionSchema, req.body, next);
+module.exports = {
+  validateCreatedTransaction: (req, _res, next) => {
+    return validateRequestAgainstSchema(
+      createTransactionSchema,
+      req.body,
+      next
+    );
+  }
 };
-
-module.exports = { validateCreatedTransaction };

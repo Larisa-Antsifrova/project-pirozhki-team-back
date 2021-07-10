@@ -1,13 +1,16 @@
-const { Router } = require("express");
-const authController = require("../controllers/auth-controllers");
-const { schemaCreateUser } = require("../validaton/auth-validation");
-const guard = require("../middleware/auth-middleware");
+const { Router } = require('express');
+const guard = require('../middleware/auth-middleware');
+const {
+  validateCreatedUser,
+  validateLoggedinUser
+} = require('../validaton/auth-validation');
+const Controllers = require('../controllers/auth-controllers');
 
 const authRoutes = Router();
 
-authRoutes.post("/registration", schemaCreateUser, authController.registration);
-authRoutes.post("/login", schemaCreateUser, authController.login);
-authRoutes.post("/logout", guard, authController.logout);
-authRoutes.get("/refresh", guard, authController.refresh);
+authRoutes.post('/registration', validateCreatedUser, Controllers.registration);
+authRoutes.post('/login', validateLoggedinUser, Controllers.login);
+authRoutes.post('/logout', guard, Controllers.logout);
+authRoutes.get('/refresh', guard, Controllers.refresh);
 
 module.exports = authRoutes;
