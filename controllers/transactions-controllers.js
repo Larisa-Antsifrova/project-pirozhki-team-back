@@ -76,6 +76,29 @@ class TransactionControllers {
 
   async updateTransactionById(req, res, next) {
     try {
+      const ownerId = req.user.id;
+      const transactionId = req.params.transactionId;
+      const updates = req.body;
+
+      const updatedTransaction = await Transactions.updateTransaction(
+        ownerId,
+        transactionId,
+        updates
+      );
+
+      if (!updatedTransaction) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: 'Transaction was not found.'
+        });
+      }
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { transaction: updatedTransaction }
+      });
     } catch (error) {
       next(error);
     }

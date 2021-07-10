@@ -41,6 +41,14 @@ class Transactions {
       owner: ownerId
     });
   }
+
+  async updateTransaction(ownerId, transactionId, updates) {
+    return await Transaction.findOneAndUpdate(
+      { owner: ownerId, _id: transactionId },
+      { ...updates },
+      { new: true }
+    );
+  }
 }
 
 module.exports = new Transactions();
