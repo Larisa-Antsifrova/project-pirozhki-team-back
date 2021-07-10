@@ -1,8 +1,9 @@
-const { Router } = require("express");
-const userRoutes = Router();
-const guard = require("../middleware/auth-middleware");
-const userController = require("../controllers/user-controllers");
+const { Router } = require('express');
+const guard = require('../middleware/auth-middleware');
+const Controllers = require('../controllers/user-controllers');
 
-userRoutes.get("/user/current", guard, userController.getCurrentUser);
+const userRoutes = Router();
+
+userRoutes.get('/user/current', guard, Controllers.getCurrentUser);
 
 module.exports = userRoutes;
