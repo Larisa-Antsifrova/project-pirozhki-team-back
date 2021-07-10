@@ -4,17 +4,22 @@ const Statuses = require('../helpers/statuses');
 const calculateTotals = require('../helpers/total-calculator');
 
 class TransactionControllers {
-  async getAllTransactions(req, res, next) {
+  async getTransactions(req, res, next) {
     try {
       const { id } = req.user;
-      // TODO: paginate all transactions by 5 and sort by date
+      const query = req.query;
+
+      const { transactions, ...pagination } =
+        await Transactions.getPaginatedTransactions(id, query);
+
       const allTransactions = await Transactions.getAllTransactions(id);
+
       const totals = calculateTotals(allTransactions);
 
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.CREATED,
-        data: { allTransactions, totals }
+        data: { transactions, pagination, totals }
       });
     } catch (error) {
       next(error);
