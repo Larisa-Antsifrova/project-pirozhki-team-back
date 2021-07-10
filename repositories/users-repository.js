@@ -1,39 +1,18 @@
-const bcrypt = require("bcryptjs");
-const { v4: uuid } = require("uuid");
-const UserModel = require("../models/user-model");
-const mailService = require("../services/mail-service");
-const tokenService = require("../services/token-service");
+const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const UserModel = require('../models/user-model');
+const mailService = require('../services/mail-service');
+const tokenService = require('../services/token-service');
 
-class AuthRepositories {
-  async registration(name, email, password) {
-    const candidate = await UserModel.findOne({ email });
-    if (candidate) {
-      throw new Error(`User with this email is already exist`);
-    }
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+class Users {
+  async getAllUsers() {}
 
-    const activationLink = uuid();
+  async getUserByEmail(email) {
+    return await UserModel.findOne({ email });
+  }
 
-    const newUser = await UserModel.create({
-      name,
-      email,
-      password: hashedPassword,
-      activationLink,
-    });
-
-    await mailService.sendActivationMail(email, activationLink);
-
-    const payload = {
-      id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-    };
-
-    const tokens = tokenService.generateTokens({ ...payload });
-    await tokenService.saveToken(payload.id, tokens.refreshToken);
-
-    return { ...tokens, user: payload };
+  async createNewUser(user) {
+    return await UserModel.create(user);
   }
 
   async login(name, email, password) {
@@ -44,13 +23,13 @@ class AuthRepositories {
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      throw new Error("Wrong credentials");
+      throw new Error('Wrong credentials');
     }
 
     const payload = {
       id: user._id,
       name: user.name,
-      email: user.email,
+      email: user.email
     };
 
     const tokens = tokenService.generateTokens({ ...payload });
@@ -66,14 +45,14 @@ class AuthRepositories {
 
   async refresh(refreshToken) {
     if (!refreshToken) {
-      throw new Error("Email or password is wrong");
+      throw new Error('Email or password is wrong');
     }
 
     const userData = tokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await tokenService.findToken(refreshToken);
 
     if (!userData || !tokenFromDb) {
-      throw new Error("Email or password is wrong");
+      throw new Error('Email or password is wrong');
     }
 
     const user = await UserModel.findById(userData.id);
@@ -81,7 +60,7 @@ class AuthRepositories {
     const payload = {
       id: user._id,
       name: user.name,
-      email: user.email,
+      email: user.email
     };
 
     const tokens = tokenService.generateTokens({ ...payload });
@@ -91,4 +70,4 @@ class AuthRepositories {
   }
 }
 
-module.exports = new AuthRepositories();
+module.exports = new Users();

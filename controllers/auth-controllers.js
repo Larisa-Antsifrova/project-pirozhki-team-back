@@ -1,29 +1,62 @@
-const authRepositories = require("../repositories/users-repository");
-const HttpCodes = require("../helpers/http-codes");
-const Statuses = require("../helpers/statuses");
+const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const Users = require('../repositories/users-repository');
+const HttpCodes = require('../helpers/http-codes');
+const Statuses = require('../helpers/statuses');
+const mailService = require('../services/mail-service');
+const tokenService = require('../services/token-service');
+
 class AuthController {
-  //User registration
   async registration(req, res, next) {
     try {
       const { name, email, password } = req.body;
 
-      const userData = await authRepositories.registration(name, email, password);
+      const candidate = await Users.getUserByEmail(email);
+
+      if (candidate) {
+        return res.status(HttpCodes.CONFLICT).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.CONFLICT,
+          message: 'The user with this email already exists.'
+        });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const activationLink = uuid();
+
+      const newUser = await Users.createNewUser({
+        name,
+        email,
+        password: hashedPassword,
+        activationLink
+      });
+
+      await mailService.sendActivationMail(email, activationLink);
+
+      const payload = {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isVerified: newUser.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
 
       //set in cookies refreshToken
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        httpOnly: true
       });
 
-      return res.json({
+      return res.status(HttpCodes.CREATED).json({
         status: Statuses.SUCCESS,
-        code: HttpCodes.OK,
-        data: { userData },
+        code: HttpCodes.CREATED,
+        data: { ...tokens, user: payload }
       });
     } catch (error) {
-      if (error.message === `User with this email is already exist`) {
-        error.status = HttpCodes.CONFLICT;
-      }
       next(error);
     }
   }
@@ -36,9 +69,9 @@ class AuthController {
       const userData = await authRepositories.login(name, email, password);
 
       //set in cookies refreshToken
-      res.cookie("refreshToken", userData.refreshToken, {
+      res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
+        httpOnly: true
       });
 
       return res.json(userData);
@@ -58,7 +91,7 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       await authRepositories.logout(refreshToken);
-      res.clearCookie("refreshToken");
+      res.clearCookie('refreshToken');
       return res.status(HttpCodes.NO_CONTENT).json({});
     } catch (error) {
       next(error);
@@ -70,9 +103,9 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       const userData = await authRepositories.refresh(refreshToken);
-      res.cookie("refreshToken", userData.refreshToken, {
+      res.cookie('refreshToken', userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
+        httpOnly: true
       });
       return res.json(userData);
     } catch (error) {
