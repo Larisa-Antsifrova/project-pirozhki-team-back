@@ -1,26 +1,35 @@
 const Joi = require('joi');
 const HttpCodes = require('../helpers/http-codes');
 
-const schemaCreateUser = Joi.object({
+const createUserSchema = Joi.object({
   password: Joi.string().trim().min(6).max(12).required(),
   email: Joi.string().trim().email({ minDomainSegments: 2 }).required(),
   name: Joi.string().trim().min(1).max(30).optional()
 });
 
-const validateSchema = async (schema, obj, next) => {
+const loginUserSchema = Joi.object({
+  password: Joi.string().required(),
+  email: Joi.string().required(),
+  name: Joi.string().optional()
+});
+
+const validateRequestAgainstSchema = async (schema, request, next) => {
   try {
-    await schema.validateAsync(obj);
+    await schema.validateAsync(request);
     next();
-  } catch (err) {
+  } catch (error) {
     next({
       status: HttpCodes.BAD_REQUEST,
-      message: `${err.message.replace(/"/g, '')}`
+      message: error.message
     });
   }
 };
 
 module.exports = {
-  schemaCreateUser: (req, _res, next) => {
-    return validateSchema(schemaCreateUser, req.body, next);
+  validateCreatedUser: (req, _res, next) => {
+    return validateRequestAgainstSchema(createUserSchema, req.body, next);
+  },
+  validateLoggedinUser: (req, _res, next) => {
+    return validateRequestAgainstSchema(loginUserSchema, req.body, next);
   }
 };
