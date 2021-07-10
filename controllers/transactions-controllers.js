@@ -26,26 +26,6 @@ class TransactionControllers {
     }
   }
 
-  async addTransaction(req, res, next) {
-    try {
-      const transaction = req.body;
-      const { id } = req.user;
-
-      const addedTransaction = await Transactions.addTransaction(
-        id,
-        transaction
-      );
-
-      res.json({
-        status: Statuses.SUCCESS,
-        code: HttpCodes.OK,
-        data: addedTransaction
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
   async getTransactionById(req, res, next) {
     try {
       const ownerId = req.user.id;
@@ -68,6 +48,26 @@ class TransactionControllers {
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
         data: { transaction }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addTransaction(req, res, next) {
+    try {
+      const transaction = req.body;
+      const { id } = req.user;
+
+      const addedTransaction = await Transactions.addTransaction(
+        id,
+        transaction
+      );
+
+      res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: addedTransaction
       });
     } catch (error) {
       next(error);

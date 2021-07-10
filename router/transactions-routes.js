@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const guard = require('../middleware/auth-middleware');
+const validateMongoId = require('../validaton/mongo-id-validation');
 const {
   validateCreatedTransaction,
   validateUpdatedTransaction,
@@ -24,16 +25,23 @@ transactionsRoutes
   );
 
 transactionsRoutes
-  .get('/transactions/:transactionId', guard, Controllers.getTransactionById)
+  .get(
+    '/transactions/:transactionId',
+    guard,
+    validateMongoId,
+    Controllers.getTransactionById
+  )
   .put(
     '/transactions/:transactionId',
     guard,
+    validateMongoId,
     validateUpdatedTransaction,
     Controllers.updateTransactionById
   )
   .delete(
     '/transactions/:transactionId',
     guard,
+    validateMongoId,
     Controllers.deleteTransactionById
   );
 
