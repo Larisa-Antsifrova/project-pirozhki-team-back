@@ -34,6 +34,24 @@ class CategoriesControllers {
 
   async getCategoryById(req, res, next) {
     try {
+      const ownerId = req.user.id;
+      const categoryId = req.params.categoryId;
+
+      const [category] = await Categories.getCategoryById(ownerId, categoryId);
+
+      if (!category) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: "Category was not found.",
+        });
+      }
+
+      return res.status(HttpCodes.OK).json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { category },
+      });
     } catch (error) {
       next(error);
     }
