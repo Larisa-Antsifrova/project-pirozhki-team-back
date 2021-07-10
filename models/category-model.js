@@ -4,6 +4,7 @@ const categorySchema = new Schema(
   {
     name: {
       type: String,
+      trim: true,
       required: [true, "Category name is required."],
     },
     income: {
@@ -13,11 +14,13 @@ const categorySchema = new Schema(
     },
     color: {
       type: String,
+      trim: true,
       required: [true, "Category color is required."],
       default: "#009688",
     },
     icon: {
       type: String,
+      trim: true,
       required: [true, "Category icon is required."],
       default: "pig-icon",
     },
