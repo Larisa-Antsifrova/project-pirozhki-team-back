@@ -1,5 +1,6 @@
 const { Router } = require("express");
 const guard = require("../middleware/auth-middleware");
+const validateMongoId = require("../validaton/mongo-id-validation");
 const {
   validateCreatedCategory,
   validateUpdatedCategory,
@@ -21,13 +22,24 @@ categoriesRoutes
   .post("/categories", guard, validateCreatedCategory, Controllers.addCategory);
 
 categoriesRoutes
-  .get("/categories/:categoryId", guard, Controllers.getCategoryById)
+  .get(
+    "/categories/:categoryId",
+    guard,
+    validateMongoId,
+    Controllers.getCategoryById,
+  )
   .put(
     "/categories/:categoryId",
     guard,
+    validateMongoId,
     validateUpdatedCategory,
     Controllers.updateCategoryById,
   )
-  .delete("/categories/:categoryId", guard, Controllers.deleteCategoryById);
+  .delete(
+    "/categories/:categoryId",
+    guard,
+    validateMongoId,
+    Controllers.deleteCategoryById,
+  );
 
 module.exports = categoriesRoutes;
