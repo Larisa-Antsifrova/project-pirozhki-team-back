@@ -15,6 +15,17 @@ const createTransactionSchema = Joi.object({
   sum: Joi.number().min(0).required()
 });
 
+const updateTransactionSchema = Joi.object({
+  date: Joi.date().raw().format('YYYY-MM-DD').optional(),
+  income: Joi.boolean().optional(),
+  category: Joi.string()
+    .trim()
+    .valid(...categoriesNames)
+    .optional(),
+  comment: Joi.string().trim().max(150).optional(),
+  sum: Joi.number().min(0).optional()
+}).or('date', 'income', 'category', 'comment', 'sum');
+
 const paginateTransactionSchema = Joi.object({
   limit: Joi.number().min(0).optional(),
   offset: Joi.number().min(0).optional()
@@ -36,6 +47,13 @@ module.exports = {
   validateCreatedTransaction: (req, _res, next) => {
     return validateRequestAgainstSchema(
       createTransactionSchema,
+      req.body,
+      next
+    );
+  },
+  validateUpdatedTransaction: (req, _res, next) => {
+    return validateRequestAgainstSchema(
+      updateTransactionSchema,
       req.body,
       next
     );
