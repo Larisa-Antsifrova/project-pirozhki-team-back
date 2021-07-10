@@ -46,9 +46,47 @@ class TransactionControllers {
     }
   }
 
-  async getTransactionById(req, res, next) {}
-  async updateTransactionById(req, res, next) {}
-  async deleteTransactionById(req, res, next) {}
+  async getTransactionById(req, res, next) {
+    try {
+      const ownerId = req.user.id;
+      const transactionId = req.params.transactionId;
+
+      const [transaction] = await Transactions.getTransactionById(
+        ownerId,
+        transactionId
+      );
+
+      if (!transaction) {
+        return res.status(HttpCodes.NOT_FOUND).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.NOT_FOUND,
+          message: 'Transaction was not found.'
+        });
+      }
+
+      return res.status(HttpCodes.OK).json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { transaction }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateTransactionById(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteTransactionById(req, res, next) {
+    try {
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new TransactionControllers();
