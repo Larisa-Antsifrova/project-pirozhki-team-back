@@ -1,6 +1,10 @@
 const Transaction = require('../models/transaction-model');
 
 class Transactions {
+  async getTransactionById(ownerId, transactionId) {
+    return await Transaction.find({ owner: ownerId, _id: transactionId });
+  }
+
   async getAllTransactions(ownerId) {
     return await Transaction.find({ owner: ownerId });
   }
@@ -31,10 +35,25 @@ class Transactions {
     });
   }
 
-  async addTransaction(id, transaction) {
+  async addTransaction(ownerId, transaction) {
     return await Transaction.create({
       ...transaction,
-      owner: id
+      owner: ownerId
+    });
+  }
+
+  async updateTransaction(ownerId, transactionId, updates) {
+    return await Transaction.findOneAndUpdate(
+      { owner: ownerId, _id: transactionId },
+      { ...updates },
+      { new: true }
+    );
+  }
+
+  async removeTransaction(ownerId, transactionId) {
+    return await Transaction.findOneAndDelete({
+      owner: ownerId,
+      _id: transactionId
     });
   }
 }
