@@ -1,6 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const TokenModel = require("../models/token-model");
+const expirationDate = require("../helpers/expiration-date");
 
 const JWT_SECRET_KEY_ACCESS = process.env.JWT_SECRET_KEY_ACCESS;
 const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
