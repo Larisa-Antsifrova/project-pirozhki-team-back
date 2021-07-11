@@ -2091,6 +2091,26 @@
             "example": "book-icon"
           }
         }
+      },
+      "deleteCategorySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Category was successfully deleted."
+          }
+        }
       }
     },
     "securitySchemes": {
