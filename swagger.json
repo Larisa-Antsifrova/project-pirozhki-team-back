@@ -234,36 +234,6 @@
         }
       }
     },
-    "/categories": {
-      "get": {
-        "tags": ["Categories"],
-        "summary": "Getting all categories",
-        "parameters": [],
-        "security": [{ "Bearer": [] }],
-        "responses": {
-          "200": {
-            "description": "Success response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/getCategoriesSuccessResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unathorized error response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/statistics": {
       "get": {
         "tags": ["Statistics"],
@@ -306,6 +276,66 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/getStatisticsErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/hardcoded": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Getting hardcoded categories as per Specification",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategoriesSuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Getting all categories",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategoriesSuccessResponse"
                 }
               }
             }
