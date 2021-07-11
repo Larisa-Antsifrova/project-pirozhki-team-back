@@ -4,9 +4,9 @@ const Users = require("../repositories/users-repository");
 const HttpCodes = require("../helpers/http-codes");
 const Statuses = require("../helpers/statuses");
 const Messages = require("../helpers/messages");
+const expirationDate = require("../helpers/expiration-date");
 const mailService = require("../services/mail-service");
 const tokenService = require("../services/token-service");
-const maxCookieAge = require("../helpers/cookie-age");
 const SALT_WORK_FACTOR = 10;
 
 class AuthController {
@@ -50,7 +50,7 @@ class AuthController {
 
       //set refreshToken to cookies
       res.cookie("refreshToken", tokens.refreshToken, {
-        maxAge: maxCookieAge,
+        maxAge: expirationDate.maxCookieAge,
         httpOnly: true,
       });
 
@@ -100,7 +100,7 @@ class AuthController {
 
       //set refreshToken to cookies
       res.cookie("refreshToken", tokens.refreshToken, {
-        maxAge: maxCookieAge,
+        maxAge: expirationDate.maxCookieAge,
         httpOnly: true,
       });
 
@@ -164,7 +164,7 @@ class AuthController {
 
       //set refreshToken to cookies
       res.cookie("refreshToken", tokens.refreshToken, {
-        maxAge: maxCookieAge,
+        maxAge: expirationDate.maxCookieAge,
         httpOnly: true,
       });
 
