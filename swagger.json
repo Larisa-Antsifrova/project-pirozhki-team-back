@@ -2066,6 +2066,31 @@
             }
           }
         }
+      },
+      "updateCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Category's name",
+            "example": "Образование"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is category income",
+            "example": false
+          },
+          "color": {
+            "type": "string",
+            "description": "Custom color in hex format",
+            "example": "#009688"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Custom icon name",
+            "example": "book-icon"
+          }
+        }
       }
     },
     "securitySchemes": {
