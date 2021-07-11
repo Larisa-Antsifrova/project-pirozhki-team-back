@@ -1,10 +1,13 @@
-const bcrypt = require('bcryptjs');
-const { v4: uuid } = require('uuid');
-const Users = require('../repositories/users-repository');
-const HttpCodes = require('../helpers/http-codes');
-const Statuses = require('../helpers/statuses');
-const mailService = require('../services/mail-service');
-const tokenService = require('../services/token-service');
+const bcrypt = require("bcryptjs");
+const { v4: uuid } = require("uuid");
+const Users = require("../repositories/users-repository");
+const HttpCodes = require("../helpers/http-codes");
+const Statuses = require("../helpers/statuses");
+const Messages = require("../helpers/messages");
+const expirationDate = require("../helpers/expiration-date");
+const mailService = require("../services/mail-service");
+const tokenService = require("../services/token-service");
+const SALT_WORK_FACTOR = 10;
 
 class AuthController {
   async registration(req, res, next) {
@@ -17,44 +20,44 @@ class AuthController {
         return res.status(HttpCodes.CONFLICT).json({
           status: Statuses.ERROR,
           code: HttpCodes.CONFLICT,
-          message: 'The user with this email already exists.'
+          message: Messages.CONFLICT_USER_AUTH,
         });
       }
 
-      const salt = await bcrypt.genSalt(10);
+      const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
       const hashedPassword = await bcrypt.hash(password, salt);
 
       const activationLink = uuid();
 
-      const newUser = await Users.createNewUser({
+      const user = await Users.createNewUser({
         name,
         email,
         password: hashedPassword,
-        activationLink
+        activationLink,
       });
 
       await mailService.sendActivationMail(email, activationLink);
 
       const payload = {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        isVerified: newUser.isVerified
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
       await tokenService.saveToken(payload.id, tokens.refreshToken);
 
       //set refreshToken to cookies
-      res.cookie('refreshToken', tokens.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        httpOnly: true
+      res.cookie("refreshToken", tokens.refreshToken, {
+        maxAge: expirationDate.maxCookieAge,
+        httpOnly: true,
       });
 
       return res.status(HttpCodes.CREATED).json({
         status: Statuses.SUCCESS,
         code: HttpCodes.CREATED,
-        data: { ...tokens, user: payload }
+        data: { ...tokens, user: payload },
       });
     } catch (error) {
       next(error);
@@ -65,49 +68,46 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-      const candidate = await Users.getUserByEmail(email);
+      const user = await Users.getUserByEmail(email);
 
-      if (!candidate) {
+      if (!user) {
         return res.status(HttpCodes.UNAUTHORIZED).json({
           status: Statuses.ERROR,
           code: HttpCodes.UNAUTHORIZED,
-          message: 'Invalid credentials.'
+          message: Messages.UNAUTHORIZED_USER_AUTH,
         });
       }
 
-      const isPasswordCorret = await bcrypt.compare(
-        password,
-        candidate.password
-      );
+      const isPasswordCorret = await bcrypt.compare(password, user.password);
 
       if (!isPasswordCorret) {
         return res.status(HttpCodes.UNAUTHORIZED).json({
           status: Statuses.ERROR,
           code: HttpCodes.UNAUTHORIZED,
-          message: 'Invalid credentials.'
+          message: Messages.UNAUTHORIZED_USER_AUTH,
         });
       }
 
       const payload = {
-        id: candidate._id,
-        name: candidate.name,
-        email: candidate.email,
-        isVerified: candidate.isVerified
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
       await tokenService.saveToken(payload.id, tokens.refreshToken);
 
       //set refreshToken to cookies
-      res.cookie('refreshToken', tokens.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        httpOnly: true
+      res.cookie("refreshToken", tokens.refreshToken, {
+        maxAge: expirationDate.maxCookieAge,
+        httpOnly: true,
       });
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { ...tokens, user: payload }
+        data: { ...tokens, user: payload },
       });
     } catch (error) {
       next(error);
@@ -119,7 +119,7 @@ class AuthController {
       const { refreshToken } = req.cookies;
       await tokenService.removeToken(refreshToken);
 
-      res.clearCookie('refreshToken');
+      res.clearCookie("refreshToken");
 
       return res.status(HttpCodes.NO_CONTENT).json({});
     } catch (error) {
@@ -135,7 +135,7 @@ class AuthController {
         return res.status(HttpCodes.UNAUTHORIZED).json({
           status: Statuses.ERROR,
           code: HttpCodes.UNAUTHORIZED,
-          message: 'Invalid credentials.'
+          message: Messages.UNAUTHORIZED_USER_AUTH,
         });
       }
 
@@ -146,7 +146,7 @@ class AuthController {
         return res.status(HttpCodes.UNAUTHORIZED).json({
           status: Statuses.ERROR,
           code: HttpCodes.UNAUTHORIZED,
-          message: 'Invalid credentials.'
+          message: Messages.UNAUTHORIZED_USER_AUTH,
         });
       }
 
@@ -156,22 +156,22 @@ class AuthController {
         id: user._id,
         name: user.name,
         email: user.email,
-        isVerified: user.isVerified
+        isVerified: user.isVerified,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
       await tokenService.saveToken(payload.id, tokens.refreshToken);
 
       //set refreshToken to cookies
-      res.cookie('refreshToken', tokens.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        httpOnly: true
+      res.cookie("refreshToken", tokens.refreshToken, {
+        maxAge: expirationDate.maxCookieAge,
+        httpOnly: true,
       });
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { ...tokens, user: payload }
+        data: { ...tokens, user: payload },
       });
     } catch (error) {
       next(error);
