@@ -8,10 +8,10 @@ const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
 class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, JWT_SECRET_KEY_ACCESS, {
-      expiresIn: "2h",
+      expiresIn: expirationDate.expiresInAccessToken,
     });
     const refreshToken = jwt.sign(payload, JWT_SECRET_KEY_REFRESH, {
-      expiresIn: "30d",
+      expiresIn: expirationDate.expiresInRefreshToken,
     });
 
     return {
