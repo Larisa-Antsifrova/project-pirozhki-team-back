@@ -402,6 +402,196 @@
         }
       }
     },
+    "/categories/{categoryId}": {
+      "get": {
+        "tags": ["Categories"],
+        "summary": "Getting category by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "description": "Category ID",
+            "schema": {
+              "type": "string",
+              "example": "60eacf5d380abb12909f6897"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategorySuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidDbIdResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Categories"],
+        "summary": "Updating category by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "description": "Category ID",
+            "schema": {
+              "type": "string",
+              "example": "60eacf5d380abb12909f6897"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update category request body. At least one field is required",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCategorySuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createCategoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Categories"],
+        "summary": "Deleting category by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "required": true,
+            "description": "Category ID",
+            "schema": {
+              "type": "string",
+              "example": "60eacf5d380abb12909f6897"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleteCategorySuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidDbIdResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/transactions": {
       "post": {
         "tags": ["Transactions"],
@@ -1791,6 +1981,89 @@
             "type": "string",
             "description": "Response message",
             "example": "Transaction was successfully deleted."
+          }
+        }
+      },
+      "getCategorySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with a category oject",
+            "properties": {
+              "category": {
+                "type": "object",
+                "description": "Category object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Category ID",
+                    "example": "60e2fcb6e0801939c8016539"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Category's name",
+                    "example": "Образование"
+                  },
+                  "income": {
+                    "type": "boolean",
+                    "description": "Is category income",
+                    "example": false
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "Custom color in hex format",
+                    "example": "#009688"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "Custom icon name",
+                    "example": "book-icon"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Owner's ID",
+                    "example": "60eac4cd7fb76924b8434d82"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Date of entry creation",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Date of entry update",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "category": {
+              "income": false,
+              "color": "#d84315",
+              "icon": "book-icon",
+              "name": "Образование",
+              "owner": "60eac4cd7fb76924b8434d82",
+              "createdAt": "2021-07-11T11:00:45.551Z",
+              "updatedAt": "2021-07-11T11:00:45.551Z",
+              "id": "60eacf5d380abb12909f6897"
+            }
           }
         }
       }
