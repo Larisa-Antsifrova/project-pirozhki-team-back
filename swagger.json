@@ -25,12 +25,12 @@
       "description": "User endpoints"
     },
     {
-      "name": "Categories",
-      "description": "Categories endpoints"
-    },
-    {
       "name": "Statistics",
       "description": "Statisctics endpoints"
+    },
+    {
+      "name": "Categories",
+      "description": "Categories endpoints"
     },
     {
       "name": "Transactions",
@@ -305,7 +305,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/getCategoriesSuccessResponse"
+                  "$ref": "#/components/schemas/getHardcodedCategoriesSuccessResponse"
                 }
               }
             }
@@ -324,6 +324,55 @@
       }
     },
     "/categories": {
+      "post": {
+        "tags": ["Categories"],
+        "summary": "Creating a new category",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Create category request body",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createCategorySuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createCategoryErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
         "tags": ["Categories"],
         "summary": "Getting all categories",
@@ -820,7 +869,7 @@
           }
         }
       },
-      "getCategoriesSuccessResponse": {
+      "getHardcodedCategoriesSuccessResponse": {
         "type": "object",
         "properties": {
           "status": {
@@ -876,6 +925,97 @@
                 "name": "Образование",
                 "income": false,
                 "color": "#c5baff"
+              }
+            ]
+          }
+        }
+      },
+      "getCategoriesSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "Payload with an array of categories ojects",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Category ID",
+                  "example": "60e2fcb6e0801939c8016539"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Category's name",
+                  "example": "Образование"
+                },
+                "income": {
+                  "type": "boolean",
+                  "description": "Is category income",
+                  "example": false
+                },
+                "color": {
+                  "type": "string",
+                  "description": "Custom color in hex format",
+                  "example": "#009688"
+                },
+                "icon": {
+                  "type": "string",
+                  "description": "Custom icon name",
+                  "example": "book-icon"
+                },
+                "owner": {
+                  "type": "string",
+                  "description": "Owner's ID",
+                  "example": "60eac4cd7fb76924b8434d82"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "Date of entry creation",
+                  "example": "2021-07-05T12:36:06.595Z"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "description": "Date of entry update",
+                  "example": "2021-07-05T12:36:06.595Z"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "categories": [
+              {
+                "income": false,
+                "color": "#d84315",
+                "icon": "book-icon",
+                "name": "Образование",
+                "owner": "60eac4cd7fb76924b8434d82",
+                "createdAt": "2021-07-11T11:00:45.551Z",
+                "updatedAt": "2021-07-11T11:00:45.551Z",
+                "id": "60eacf5d380abb12909f6897"
+              },
+              {
+                "income": true,
+                "color": "#ffeb3b",
+                "icon": "money-icon",
+                "name": "ЗП Джуна",
+                "owner": "60eac4cd7fb76924b8434d82",
+                "createdAt": "2021-07-11T12:00:45.551Z",
+                "updatedAt": "2021-07-11T12:00:45.551Z",
+                "id": "60eacf5d380abb12909f6898"
               }
             ]
           }
@@ -1004,6 +1144,93 @@
             "type": "string",
             "description": "Joi validation error message",
             "example": "'endDate' is required"
+          }
+        }
+      },
+      "createCategoryRequest": {
+        "type": "object",
+        "required": ["name", "income"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Category's name",
+            "example": "Образование"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is category income",
+            "example": false
+          },
+          "color": {
+            "type": "string",
+            "description": "Custom color in hex format",
+            "example": "#009688"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Custom icon name",
+            "example": "book-icon"
+          }
+        }
+      },
+      "createCategorySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 201
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about newly created category",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Category ID",
+                "example": "60e2fcb6e0801939c8016539"
+              },
+              "name": {
+                "type": "string",
+                "description": "Category's name",
+                "example": "Образование"
+              },
+              "income": {
+                "type": "boolean",
+                "description": "Is category income",
+                "example": false
+              },
+              "color": {
+                "type": "string",
+                "description": "Custom color in hex format",
+                "example": "#009688"
+              },
+              "icon": {
+                "type": "string",
+                "description": "Custom icon name",
+                "example": "book-icon"
+              },
+              "owner": {
+                "type": "string",
+                "description": "Owner's ID",
+                "example": "60eac4cd7fb76924b8434d82"
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date of entry creation",
+                "example": "2021-07-05T12:36:06.595Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date of entry update",
+                "example": "2021-07-05T12:36:06.595Z"
+              }
+            }
           }
         }
       },
@@ -1146,6 +1373,26 @@
             "type": "string",
             "description": "Joi validation error message",
             "example": "'date' must be in YYYY-MM-DD format"
+          }
+        }
+      },
+      "createCategoryErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'income' is required"
           }
         }
       },
