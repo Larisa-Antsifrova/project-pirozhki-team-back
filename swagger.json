@@ -11,7 +11,7 @@
       "description": "Production server for Wallet App"
     },
     {
-      "url": "http://localhost:5000",
+      "url": "http://localhost:8888",
       "description": "Development server for Wallet App"
     }
   ],
@@ -432,6 +432,196 @@
           }
         }
       }
+    },
+    "/transactions/{transactionId}": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Getting transaction by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transactionId",
+            "required": true,
+            "description": "Transaction ID",
+            "schema": {
+              "type": "string",
+              "example": "60e997e4a7140241b40fcc70"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidDbIdResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Transactions"],
+        "summary": "Updating transaction by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transactionId",
+            "required": true,
+            "description": "Transaction ID",
+            "schema": {
+              "type": "string",
+              "example": "60e997e4a7140241b40fcc70"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Update transaction request body. At least one field is required",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/createTransactionErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Transactions"],
+        "summary": "Deleting transaction by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transactionId",
+            "required": true,
+            "description": "Transaction ID",
+            "schema": {
+              "type": "string",
+              "example": "60e997e4a7140241b40fcc70"
+            }
+          }
+        ],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deleteTransactionSuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidDbIdResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -818,6 +1008,36 @@
           }
         }
       },
+      "updateTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
+            "type": "integer",
+            "description": "Sum of transaction",
+            "example": 30
+          }
+        }
+      },
       "createTransactionSuccessResponse": {
         "type": "object",
         "properties": {
@@ -1088,6 +1308,95 @@
           }
         }
       },
+      "getTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about tansactions, pagination, and balance totals",
+            "properties": {
+              "transaction": {
+                "type": "object",
+                "description": "Requested transaction",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Transaction ID",
+                    "example": "60e2fcb6e0801939c8016539"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Category of transaction",
+                    "example": "Регулярный доход"
+                  },
+                  "income": {
+                    "type": "boolean",
+                    "description": "Is category an income",
+                    "example": true
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Date indicated by the user",
+                    "example": "2021-05-04T21:00:00.000Z"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment for the transaction",
+                    "example": "ЗП Джуна"
+                  },
+                  "sum": {
+                    "type": "integer",
+                    "description": "Amount of the transaction",
+                    "example": 500
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Date of entry creation",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Date of entry update",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Owner's ID",
+                    "example": "60e973cfe53c0b3ed49951c1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "transaction": {
+              "income": false,
+              "category": "Машина",
+              "comment": "Чистка ноутбука",
+              "date": "2021-08-01T00:00:00.000Z",
+              "sum": 700,
+              "owner": "60e973cfe53c0b3ed49951c1",
+              "createdAt": "2021-07-10T12:51:48.716Z",
+              "updatedAt": "2021-07-10T12:51:48.716Z",
+              "id": "60e997e4a7140241b40fcc70"
+            }
+          }
+        }
+      },
       "queryParamsErrorResponse": {
         "type": "object",
         "properties": {
@@ -1105,6 +1414,26 @@
             "type": "string",
             "description": "Joi validation error message",
             "example": "'limit' must be a number"
+          }
+        }
+      },
+      "invalidDbIdResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation error message",
+            "example": "Invalid params id."
           }
         }
       },
@@ -1145,6 +1474,46 @@
             "type": "string",
             "description": "Rate limit exceeded error message",
             "example": "Too many requests. Please try again later."
+          }
+        }
+      },
+      "resourceNotFoundResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "description": "Resource not found error message",
+            "example": "Not found"
+          }
+        }
+      },
+      "deleteTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Transaction was successfully deleted."
           }
         }
       }
