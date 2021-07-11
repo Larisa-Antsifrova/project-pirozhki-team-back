@@ -1,53 +1,178 @@
-require("colors");
-const authRepositories = require("../repositories/users-repository");
-const HttpCodes = require("../helpers/http-codes");
+const bcrypt = require('bcryptjs');
+const { v4: uuid } = require('uuid');
+const Users = require('../repositories/users-repository');
+const HttpCodes = require('../helpers/http-codes');
+const Statuses = require('../helpers/statuses');
+const mailService = require('../services/mail-service');
+const tokenService = require('../services/token-service');
 
 class AuthController {
-  //User registration
   async registration(req, res, next) {
     try {
       const { name, email, password } = req.body;
 
-      const userData = await authRepositories.registration(name, email, password);
+      const candidate = await Users.getUserByEmail(email);
 
-      res.cookie("refreshToken", userData.refreshToken, {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
+      if (candidate) {
+        return res.status(HttpCodes.CONFLICT).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.CONFLICT,
+          message: 'The user with this email already exists.'
+        });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const activationLink = uuid();
+
+      const newUser = await Users.createNewUser({
+        name,
+        email,
+        password: hashedPassword,
+        activationLink
       });
 
-      return res.json(userData);
+      await mailService.sendActivationMail(email, activationLink);
+
+      const payload = {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        isVerified: newUser.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+      //set refreshToken to cookies
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        httpOnly: true
+      });
+
+      return res.status(HttpCodes.CREATED).json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.CREATED,
+        data: { ...tokens, user: payload }
+      });
     } catch (error) {
       next(error);
     }
   }
 
-  //User login
   async login(req, res, next) {
     try {
+      const { email, password } = req.body;
+
+      const candidate = await Users.getUserByEmail(email);
+
+      if (!candidate) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const isPasswordCorret = await bcrypt.compare(
+        password,
+        candidate.password
+      );
+
+      if (!isPasswordCorret) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const payload = {
+        id: candidate._id,
+        name: candidate.name,
+        email: candidate.email,
+        isVerified: candidate.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+      //set refreshToken to cookies
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        httpOnly: true
+      });
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { ...tokens, user: payload }
+      });
     } catch (error) {
-      // next(error);
+      next(error);
     }
   }
 
-  //User logout
   async logout(req, res, next) {
     try {
+      const { refreshToken } = req.cookies;
+      await tokenService.removeToken(refreshToken);
+
+      res.clearCookie('refreshToken');
+
+      return res.status(HttpCodes.NO_CONTENT).json({});
     } catch (error) {
-      // next(error);
+      next(error);
     }
   }
 
-  // Verify mail
-  async verify(req, res, next) {
+  async refresh(req, res, next) {
     try {
-    } catch (error) {
-      // next(error);
-    }
-  }
-  //Test
-  async getUsers(req, res, next) {
-    try {
-      res.json({ message: "Hello auth router" });
+      const { refreshToken } = req.cookies;
+
+      if (!refreshToken) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const userData = tokenService.validateRefreshToken(refreshToken);
+      const tokenFromDb = await tokenService.findToken(refreshToken);
+
+      if (!userData || !tokenFromDb) {
+        return res.status(HttpCodes.UNAUTHORIZED).json({
+          status: Statuses.ERROR,
+          code: HttpCodes.UNAUTHORIZED,
+          message: 'Invalid credentials.'
+        });
+      }
+
+      const user = await Users.getUserById(userData.id);
+
+      const payload = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        isVerified: user.isVerified
+      };
+
+      const tokens = tokenService.generateTokens({ ...payload });
+      await tokenService.saveToken(payload.id, tokens.refreshToken);
+
+      //set refreshToken to cookies
+      res.cookie('refreshToken', tokens.refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        httpOnly: true
+      });
+
+      return res.json({
+        status: Statuses.SUCCESS,
+        code: HttpCodes.OK,
+        data: { ...tokens, user: payload }
+      });
     } catch (error) {
       next(error);
     }

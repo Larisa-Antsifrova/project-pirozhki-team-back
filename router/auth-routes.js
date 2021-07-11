@@ -1,18 +1,16 @@
-// other:
-// /auth/refreshToken - или как-то по-другому его назвать - ендпойнт для того, чтобы перевыдать пару рефреш и эксесс токенов
-
 const { Router } = require('express');
+const guard = require('../middleware/auth-middleware');
+const {
+  validateCreatedUser,
+  validateLoggedinUser
+} = require('../validaton/auth-validation');
+const Controllers = require('../controllers/auth-controllers');
 
 const authRoutes = Router();
-const authController = require('../controllers/auth-controllers');
-// const { schemaCreateUser, shemaUpdateSubscription } = require("../validaton/auth-validation");
-// const guard = require("../middleware/auth-middleware");
 
-authRoutes.post('/registration', authController.registration);
-authRoutes.post('/login', authController.login);
-authRoutes.post('/logout', authController.logout);
-
-authRoutes.get('verify/:link', authController.verify);
-authRoutes.get('/users', authController.getUsers);
+authRoutes.post('/registration', validateCreatedUser, Controllers.registration);
+authRoutes.post('/login', validateLoggedinUser, Controllers.login);
+authRoutes.post('/logout', guard, Controllers.logout);
+authRoutes.get('/refresh', guard, Controllers.refresh);
 
 module.exports = authRoutes;
