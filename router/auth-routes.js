@@ -11,6 +11,7 @@ const authRoutes = Router();
 authRoutes.post('/registration', validateCreatedUser, Controllers.registration);
 authRoutes.post('/login', validateLoggedinUser, Controllers.login);
 authRoutes.post('/logout', guard, Controllers.logout);
+authRoutes.get('/verify/:link', Controllers.verify);
 authRoutes.get('/refresh', guard, Controllers.refresh);
 
 module.exports = authRoutes;
