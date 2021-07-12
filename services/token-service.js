@@ -1,6 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const TokenModel = require("../models/token-model");
+const expirationDate = require("../helpers/expiration-date");
 
 const JWT_SECRET_KEY_ACCESS = process.env.JWT_SECRET_KEY_ACCESS;
 const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
@@ -8,10 +9,10 @@ const JWT_SECRET_KEY_REFRESH = process.env.JWT_SECRET_KEY_REFRESH;
 class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, JWT_SECRET_KEY_ACCESS, {
-      expiresIn: "2h",
+      expiresIn: expirationDate.expiresInAccessToken,
     });
     const refreshToken = jwt.sign(payload, JWT_SECRET_KEY_REFRESH, {
-      expiresIn: "30d",
+      expiresIn: expirationDate.expiresInRefreshToken,
     });
 
     return {

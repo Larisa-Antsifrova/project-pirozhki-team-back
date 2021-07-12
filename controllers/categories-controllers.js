@@ -2,7 +2,7 @@ const HardCodedCategories = require("../helpers/categories");
 const Categories = require("../repositories/categories-repository");
 const HttpCodes = require("../helpers/http-codes");
 const Statuses = require("../helpers/statuses");
-
+const Messages = require("../helpers/messages");
 class CategoriesControllers {
   getHardCodedCategories(req, res, next) {
     try {
@@ -43,7 +43,7 @@ class CategoriesControllers {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: "Category was not found.",
+          message: Messages.NOT_FOUND_CATEGORY,
         });
       }
 
@@ -80,17 +80,13 @@ class CategoriesControllers {
       const categoryId = req.params.categoryId;
       const updates = req.body;
 
-      const updatedCategory = await Categories.updateCategory(
-        ownerId,
-        categoryId,
-        updates,
-      );
+      const updatedCategory = await Categories.updateCategory(ownerId, categoryId, updates);
 
       if (!updatedCategory) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: "Category was not found.",
+          message: Messages.NOT_FOUND_CATEGORY,
         });
       }
 
@@ -109,23 +105,20 @@ class CategoriesControllers {
       const ownerId = req.user.id;
       const categoryId = req.params.categoryId;
 
-      const deletedCategory = await Categories.removeCategory(
-        ownerId,
-        categoryId,
-      );
+      const deletedCategory = await Categories.removeCategory(ownerId, categoryId);
 
       if (!deletedCategory) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: "Category was not found.",
+          message: Messages.NOT_FOUND_CATEGORY,
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        message: "Category was successfully deleted.",
+        message: Messages.DELETE_CATEGORY,
       });
     } catch (error) {
       next(error);
