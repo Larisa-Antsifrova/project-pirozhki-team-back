@@ -1,34 +1,29 @@
-const Joi = require('joi').extend(require('@joi/date'));
-const HttpCodes = require('../helpers/http-codes');
-const Categories = require('../helpers/categories');
+const Joi = require("joi").extend(require("@joi/date"));
+Joi.objectId = require("joi-objectid")(Joi);
+const HttpCodes = require("../helpers/http-codes");
+const Categories = require("../helpers/categories");
 
 const categoriesNames = Categories.map(category => category.name);
 
 const createTransactionSchema = Joi.object({
-  date: Joi.date().raw().format('YYYY-MM-DD').required(),
+  date: Joi.date().raw().format("YYYY-MM-DD").required(),
   income: Joi.boolean().required(),
-  category: Joi.string()
-    .trim()
-    .valid(...categoriesNames)
-    .required(),
+  category: Joi.objectId().required(),
   comment: Joi.string().trim().max(150).optional(),
-  sum: Joi.number().min(0).required()
+  sum: Joi.number().min(0).required(),
 });
 
 const updateTransactionSchema = Joi.object({
-  date: Joi.date().raw().format('YYYY-MM-DD').optional(),
+  date: Joi.date().raw().format("YYYY-MM-DD").optional(),
   income: Joi.boolean().optional(),
-  category: Joi.string()
-    .trim()
-    .valid(...categoriesNames)
-    .optional(),
+  category: Joi.objectId().required(),
   comment: Joi.string().trim().max(150).optional(),
-  sum: Joi.number().min(0).optional()
-}).or('date', 'income', 'category', 'comment', 'sum');
+  sum: Joi.number().min(0).optional(),
+}).or("date", "income", "category", "comment", "sum");
 
 const paginateTransactionSchema = Joi.object({
   limit: Joi.number().min(0).optional(),
-  offset: Joi.number().min(0).optional()
+  offset: Joi.number().min(0).optional(),
 });
 
 const validateRequestAgainstSchema = async (schema, request, next) => {
@@ -38,7 +33,7 @@ const validateRequestAgainstSchema = async (schema, request, next) => {
   } catch (error) {
     next({
       status: HttpCodes.BAD_REQUEST,
-      message: error.message
+      message: error.message,
     });
   }
 };
@@ -48,21 +43,21 @@ module.exports = {
     return validateRequestAgainstSchema(
       createTransactionSchema,
       req.body,
-      next
+      next,
     );
   },
   validateUpdatedTransaction: (req, _res, next) => {
     return validateRequestAgainstSchema(
       updateTransactionSchema,
       req.body,
-      next
+      next,
     );
   },
   validatePaginationQueryParams: (req, _res, next) => {
     return validateRequestAgainstSchema(
       paginateTransactionSchema,
       req.query,
-      next
+      next,
     );
-  }
+  },
 };
