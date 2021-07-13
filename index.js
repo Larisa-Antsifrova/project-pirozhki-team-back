@@ -35,6 +35,10 @@ app.use(statisticsRoutes);
 app.use(transactionsRoutes);
 app.use(userRoutes);
 app.use(docsRoutes);
+// Simple redirect to documentation
+app.use("/", (req, res, next) => {
+  return res.redirect(HttpCodes.OK, "/api-docs");
+});
 
 // Handling 404 Not found
 app.use((req, res) => {
@@ -50,7 +54,10 @@ app.use((err, req, res, next) => {
   const statusCode = err.status || HttpCodes.INTERNAL_SERVER_ERROR;
 
   res.status(statusCode).json({
-    status: statusCode === HttpCodes.INTERNAL_SERVER_ERROR ? Statuses.FAIL : Statuses.ERROR,
+    status:
+      statusCode === HttpCodes.INTERNAL_SERVER_ERROR
+        ? Statuses.FAIL
+        : Statuses.ERROR,
     code: statusCode,
     message: err.message,
   });
