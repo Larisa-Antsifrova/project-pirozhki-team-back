@@ -9,9 +9,9 @@ const Messages = {
   NOT_FOUND_TRANSACTION: "Transaction was not found.",
   DELETE_TRANSACTION: "Transaction was successfully deleted.",
   INVALID_ID: "Invalid params id.",
-  VERIFY_SUCCESS: "Verification successful",
-  RESUBMITTED_SUCCESS: "Resubmitted successful",
-  RE_VERIFY_ERROR: "Verification has already been passed",
+  VERIFY_SUCCESS: "Verification successful.",
+  RESUBMITTED_SUCCESS: "Resubmit successful.",
+  RE_VERIFY_ERROR: "Verification has already been passed.",
 };
 
 module.exports = Messages;
