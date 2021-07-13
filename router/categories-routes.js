@@ -11,32 +11,32 @@ const categoriesRoutes = Router();
 
 // Temp route to return hard coded categories from the Spec
 categoriesRoutes.get(
-  "/categories/hardcoded",
+  "/hardcoded",
   guard,
   Controllers.getHardCodedCategories,
 );
 
 // Routes to let users handle their own categories
 categoriesRoutes
-  .get("/categories", guard, Controllers.getCategories)
-  .post("/categories", guard, validateCreatedCategory, Controllers.addCategory);
+  .get("/", guard, Controllers.getCategories)
+  .post("/", guard, validateCreatedCategory, Controllers.addCategory);
 
 categoriesRoutes
   .get(
-    "/categories/:categoryId",
+    "/:categoryId",
     guard,
     validateMongoId,
     Controllers.getCategoryById,
   )
   .put(
-    "/categories/:categoryId",
+    "/:categoryId",
     guard,
     validateMongoId,
     validateUpdatedCategory,
     Controllers.updateCategoryById,
   )
   .delete(
-    "/categories/:categoryId",
+    "/:categoryId",
     guard,
     validateMongoId,
     Controllers.deleteCategoryById,
