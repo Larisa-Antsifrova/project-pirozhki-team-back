@@ -1,18 +1,19 @@
+require("dotenv").config();
 const bcrypt = require("bcryptjs");
-const { v4: uuid } = require("uuid");
 const Users = require("../repositories/users-repository");
 const HttpCodes = require("../helpers/http-codes");
 const Statuses = require("../helpers/statuses");
 const Messages = require("../helpers/messages");
 const expirationDate = require("../helpers/expiration-date");
-const mailService = require("../services/mail-service");
+const EmailService = require("../services/email");
+const CreateSenderNodemailer = require("../services/mail-service");
 const tokenService = require("../services/token-service");
 const SALT_WORK_FACTOR = 10;
 
 class AuthController {
   async registration(req, res, next) {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, activationLink } = req.body;
 
       const candidate = await Users.getUserByEmail(email);
 
@@ -27,8 +28,6 @@ class AuthController {
       const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const activationLink = uuid();
-
       const user = await Users.createNewUser({
         name,
         email,
@@ -36,7 +35,13 @@ class AuthController {
         activationLink,
       });
 
-      await mailService.sendActivationMail(email, activationLink);
+      //TODO: раскоментировать логику отправки письма при регистрации для продакшена
+      // try {
+      //   const emailService = new EmailService(process.env.NODE_ENV, new CreateSenderNodemailer());
+      //   await emailService.sendVerifyEmail(user.activationLink, user.email);
+      // } catch (error) {
+      //   console.log(error.message);
+      // }
 
       const payload = {
         id: user._id,
@@ -77,6 +82,15 @@ class AuthController {
           message: Messages.UNAUTHORIZED_USER_AUTH,
         });
       }
+
+      //TODO: раскоментировать проверку на верификацию юзера при регистрации, можно объеденить с пред. проверкой
+      // if (!user.isVerified) {
+      //   return res.status(HttpCodes.UNAUTHORIZED).json({
+      //     status: Statuses.ERROR,
+      //     code: HttpCodes.UNAUTHORIZED,
+      //     message: Messages.UNAUTHORIZED_USER_AUTH,
+      //   });
+      // }
 
       const isPasswordCorret = await bcrypt.compare(password, user.password);
 
@@ -172,6 +186,32 @@ class AuthController {
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
         data: { ...tokens, user: payload },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async verify(req, res, next) {
+    try {
+      const activationLink = req.params.link;
+      const user = await Users.findByActivationLink(activationLink);
+      if (user) {
+        await Users.updateIsVerified(user.id, true);
+
+        return res.json({
+          status: Statuses.SUCCESS,
+          code: HttpCodes.OK,
+          message: Messages.VERIFY_SUCCESS,
+        });
+        //TODO: после деплоя фронта указать редирект на доменное имя клиента
+        // return res.redirect(process.env.CLIENT_URL);
+      }
+
+      return res.status(HttpCodes.NOT_FOUND).json({
+        status: Statuses.ERROR,
+        code: HttpCodes.NOT_FOUND,
+        message: Messages.NOT_FOUND_USER,
       });
     } catch (error) {
       next(error);
