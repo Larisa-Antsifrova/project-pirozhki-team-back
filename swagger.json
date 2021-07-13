@@ -204,6 +204,47 @@
         }
       }
     },
+    "/auth/verify/{link}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Verifying a user via email",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "link",
+            "required": true,
+            "description": "Verification link ID",
+            "schema": {
+              "type": "string",
+              "example": "96db2aab-c6d9-4ee3-99fb-9d0cee453cd7"
+            }
+          }
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/verificationSuccessResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/current": {
       "get": {
         "tags": ["User"],
@@ -968,13 +1009,39 @@
           }
         }
       },
+      "verificationSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Operation status",
+                "example": "error"
+              },
+              "code": {
+                "type": "integer",
+                "description": "HTTP code",
+                "example": 200
+              },
+              "message": {
+                "type": "string",
+                "description": "Success confirmation message",
+                "example": "Verification successful"
+              }
+            }
+          }
+        }
+      },
       "registrationBadRequestErrorResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
             "description": "Operation status",
-            "example": "error"
+            "example": "success"
           },
           "code": {
             "type": "integer",
