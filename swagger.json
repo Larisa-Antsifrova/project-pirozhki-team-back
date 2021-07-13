@@ -1045,6 +1045,11 @@
             "type": "object",
             "description": "Payload with current user basic info",
             "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's ID",
+                "example": "60e3680607be0344645c9f01"
+              },
               "name": {
                 "type": "string",
                 "description": "User name",
@@ -1054,6 +1059,16 @@
                 "type": "string",
                 "description": "User email",
                 "format": "email"
+              },
+              "isVerified": {
+                "type": "boolean",
+                "description": "If user is verified via email",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "When user was created",
+                "example": "2021-07-13T12:38:57.515Z"
               }
             }
           }
