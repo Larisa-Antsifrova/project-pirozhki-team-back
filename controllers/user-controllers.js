@@ -1,14 +1,15 @@
-const HttpCodes = require('../helpers/http-codes');
-const Statuses = require('../helpers/statuses');
+const HttpCodes = require("../helpers/http-codes");
+const Statuses = require("../helpers/statuses");
 
 class UserController {
-  async getCurrentUser(req, res, next) {
+  getCurrentUser(req, res, next) {
     try {
-      const { name, email } = req.user;
+      const { id, name, email, isVerified, createdAt } = req.user;
+
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { name, email }
+        data: { id, name, email, isVerified, createdAt },
       });
     } catch (error) {
       next(error);
