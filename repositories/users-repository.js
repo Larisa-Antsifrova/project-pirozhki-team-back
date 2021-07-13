@@ -12,6 +12,14 @@ class Users {
   async createNewUser(user) {
     return await UserModel.create(user);
   }
+
+  async findByActivationLink(activationLink) {
+    return await UserModel.findOne({activationLink});
+}
+
+  async updateIsVerified(id, isVerified) {
+    return await UserModel.updateOne({_id: id}, {isVerified});
+}
 }
 
 module.exports = new Users();
