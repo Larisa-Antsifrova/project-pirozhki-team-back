@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const { v4: uuid } = require("uuid");
 
 const userSchema = new Schema(
   {
@@ -19,7 +20,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: false
     },
-    activationLink: { type: String }
+    activationLink: {
+      type: String,
+      default: uuid(),
+    }
   },
   {
     versionKey: false,
