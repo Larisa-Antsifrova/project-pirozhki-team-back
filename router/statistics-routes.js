@@ -8,7 +8,7 @@ const Controllers = require('../controllers/statistics-controllers');
 const statisticsRoutes = Router();
 
 statisticsRoutes.get(
-  '/statistics',
+  '/',
   guard,
   validateStatisticsQuery,
   Controllers.getStatistics

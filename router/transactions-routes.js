@@ -12,13 +12,13 @@ const transactionsRoutes = Router();
 
 transactionsRoutes
   .get(
-    '/transactions',
+    '/',
     guard,
     validatePaginationQueryParams,
     Controllers.getTransactions
   )
   .post(
-    '/transactions',
+    '/',
     guard,
     validateCreatedTransaction,
     Controllers.addTransaction
@@ -26,20 +26,20 @@ transactionsRoutes
 
 transactionsRoutes
   .get(
-    '/transactions/:transactionId',
+    '/:transactionId',
     guard,
     validateMongoId,
     Controllers.getTransactionById
   )
   .put(
-    '/transactions/:transactionId',
+    '/:transactionId',
     guard,
     validateMongoId,
     validateUpdatedTransaction,
     Controllers.updateTransactionById
   )
   .delete(
-    '/transactions/:transactionId',
+    '/:transactionId',
     guard,
     validateMongoId,
     Controllers.deleteTransactionById

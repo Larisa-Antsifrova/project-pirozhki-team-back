@@ -30,10 +30,10 @@ app.use(boolParser());
 app.use(cookieParser());
 
 app.use("/auth", authRoutes);
-app.use(categoriesRoutes);
-app.use(statisticsRoutes);
-app.use(transactionsRoutes);
-app.use(userRoutes);
+app.use("/categories", categoriesRoutes);
+app.use("/statistics", statisticsRoutes);
+app.use("/transactions", transactionsRoutes);
+app.use("/user", userRoutes);
 app.use(docsRoutes);
 // Simple redirect to documentation
 app.use("/", (req, res, next) => {
