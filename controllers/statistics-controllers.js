@@ -1,8 +1,8 @@
-const Transactions = require('../repositories/transactions-repository');
-const HttpCodes = require('../helpers/http-codes');
-const Statuses = require('../helpers/statuses');
-const calculateTotals = require('../helpers/total-calculator');
-const calculateStatistics = require('../helpers/statistics-calculator');
+const Transactions = require("../repositories/transactions-repository");
+const HttpCodes = require("../helpers/http-codes");
+const Statuses = require("../helpers/statuses");
+const calculateTotals = require("../helpers/total-calculator");
+const calculateStatistics = require("../helpers/statistics-calculator");
 
 class StatisticsControllers {
   async getStatistics(req, res, next) {
@@ -14,8 +14,10 @@ class StatisticsControllers {
         await Transactions.getAllTransactionsWithinPeriod(
           id,
           startDate,
-          endDate
+          endDate,
         );
+
+      const { date } = (await Transactions.getEarliestTransaction(id)) || {};
 
       const statistics = calculateStatistics(allTransactionsWithinPeriod);
       const totals = calculateTotals(allTransactionsWithinPeriod);
@@ -23,7 +25,7 @@ class StatisticsControllers {
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { statistics, totals }
+        data: { statistics, totals, earliest: date },
       });
     } catch (error) {
       next(error);
