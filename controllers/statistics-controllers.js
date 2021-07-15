@@ -17,7 +17,7 @@ class StatisticsControllers {
           endDate,
         );
 
-      const { date } = (await Transactions.getEarliestTransaction(id)) || {};
+      const transaction = await Transactions.getEarliestTransaction(id);
 
       const statistics = calculateStatistics(allTransactionsWithinPeriod);
       const totals = calculateTotals(allTransactionsWithinPeriod);
@@ -25,7 +25,7 @@ class StatisticsControllers {
       res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { statistics, totals, earliest: date },
+        data: { statistics, totals, earliest: transaction?.date || {} },
       });
     } catch (error) {
       next(error);
