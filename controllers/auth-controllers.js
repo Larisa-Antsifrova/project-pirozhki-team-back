@@ -48,6 +48,7 @@ class AuthController {
         name: user.name,
         email: user.email,
         isVerified: user.isVerified,
+        createdAt: user.createdAt,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
@@ -107,6 +108,7 @@ class AuthController {
         name: user.name,
         email: user.email,
         isVerified: user.isVerified,
+        createdAt: user.createdAt,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
@@ -171,6 +173,7 @@ class AuthController {
         name: user.name,
         email: user.email,
         isVerified: user.isVerified,
+        createdAt: user.createdAt,
       };
 
       const tokens = tokenService.generateTokens({ ...payload });
