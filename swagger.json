@@ -35,6 +35,10 @@
     {
       "name": "Transactions",
       "description": "Transactions endpoints"
+    },
+    {
+      "name": "Currency Rates",
+      "description": "Currency rates endpoints"
     }
   ],
   "paths": {
@@ -61,7 +65,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/authSuccessResponse"
+                  "$ref": "#/components/schemas/registrationSuccessResponse"
                 }
               }
             }
@@ -133,6 +137,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/loginBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginInvalidCredentialsErrorResponse"
                 }
               }
             }
@@ -689,22 +703,20 @@
         "parameters": [
           {
             "in": "query",
-            "name": "limit",
-            "required": false,
-            "description": "5 is by default",
+            "name": "startDate",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "example": 10
+              "type": "string",
+              "example": "2021-07-01"
             }
           },
           {
             "in": "query",
-            "name": "offset",
-            "required": false,
-            "description": "0 is by default",
+            "name": "endDate",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "example": 0
+              "type": "string",
+              "example": "2021-08-01"
             }
           }
         ],
@@ -932,6 +944,36 @@
           }
         }
       }
+    },
+    "/currency": {
+      "get": {
+        "tags": ["Currency Rates"],
+        "summary": "Getting currency rates from PrivatBank API",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCurrencySuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -957,25 +999,19 @@
           }
         }
       },
-      "loginRequest": {
+      "registrationSuccessResponse": {
         "type": "object",
-        "required": ["email", "password"],
         "properties": {
-          "email": {
+          "status": {
             "type": "string",
-            "description": "User's email",
-            "format": "email"
+            "description": "Operation status",
+            "example": "success"
           },
-          "password": {
-            "type": "string",
-            "description": "User's password",
-            "example": "test123456"
-          }
-        }
-      },
-      "authSuccessResponse": {
-        "type": "object",
-        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 201
+          },
           "accessToken": {
             "type": "string",
             "description": "Access token",
@@ -1004,32 +1040,16 @@
                 "type": "string",
                 "description": "User's email",
                 "format": "email"
-              }
-            }
-          }
-        }
-      },
-      "verificationSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "object",
-            "description": "User's information object",
-            "properties": {
-              "status": {
-                "type": "string",
-                "description": "Operation status",
-                "example": "error"
               },
-              "code": {
-                "type": "integer",
-                "description": "HTTP code",
-                "example": 200
+              "isVerified": {
+                "type": "boolean",
+                "description": "Is email verification completed",
+                "example": false
               },
-              "message": {
+              "createdAt": {
                 "type": "string",
-                "description": "Success confirmation message",
-                "example": "Verification successful"
+                "description": "Date when user was created/registered",
+                "example": "2021-07-15T09:20:21.034Z"
               }
             }
           }
@@ -1075,6 +1095,78 @@
           }
         }
       },
+      "loginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "description": "User's password",
+            "example": "test123456"
+          }
+        }
+      },
+      "authSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjU1NzYxOTR9.YbZLT2ATVet_yYlMDuPUy5x_xfYJ7AXMDljGRRgS1pk"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjgxNjA5OTR9.EXNWBeJ0kDpzf2rjrn6whU1cXItSGXnL117jLvJsoiE"
+          },
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's ID",
+                "example": "60e3680607be0344645c9f01"
+              },
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "isVerified": {
+                "type": "boolean",
+                "description": "Is email verification completed",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date when user was created/registered",
+                "example": "2021-07-15T09:20:21.034Z"
+              }
+            }
+          }
+        }
+      },
       "loginBadRequestErrorResponse": {
         "type": "object",
         "properties": {
@@ -1090,8 +1182,54 @@
           },
           "message": {
             "type": "string",
+            "description": "Joi validation error message. Joi checks only for presence of required fields.",
+            "example": "\"email\" is required"
+          }
+        }
+      },
+      "loginInvalidCredentialsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
             "description": "Login error message",
             "example": "Invalid credentials."
+          }
+        }
+      },
+      "verificationSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Operation status",
+                "example": "success"
+              },
+              "code": {
+                "type": "integer",
+                "description": "HTTP code",
+                "example": 200
+              },
+              "message": {
+                "type": "string",
+                "description": "Success confirmation message",
+                "example": "Verification successful"
+              }
+            }
           }
         }
       },
@@ -1138,6 +1276,138 @@
                 "example": "2021-07-13T12:38:57.515Z"
               }
             }
+          }
+        }
+      },
+      "getStatisticsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with statistics for given period and balance totals",
+            "properties": {
+              "statistics": {
+                "type": "array",
+                "description": "Array of statistics objects",
+                "items": {
+                  "properties": {
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Total amount of this type of transaction within given period",
+                      "example": 500
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color of the transaction category",
+                      "example": "#6e78e8"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income within given period",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses within given period",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance within given period",
+                    "example": 300
+                  }
+                }
+              },
+              "earliest": {
+                "type": "string",
+                "description": "Date the transaction was made indicated by user",
+                "example": "2021-07-05T00:00:00.000Z"
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "statistics": [
+              {
+                "category": "Регулярный доход",
+                "income": true,
+                "sum": 1500,
+                "color": "#1b5e20"
+              },
+              {
+                "category": "Основные расходы",
+                "income": false,
+                "sum": 200,
+                "color": "#fed057"
+              },
+              {
+                "category": "Машина",
+                "income": false,
+                "sum": 300,
+                "color": "#6e78e8"
+              },
+              {
+                "category": "Продукты",
+                "income": false,
+                "sum": 400,
+                "color": "#4a56e2"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 900,
+              "balance": 600
+            },
+            "earliest": "2021-07-05T00:00:00.000Z"
+          }
+        }
+      },
+      "getStatisticsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'endDate' is required"
           }
         }
       },
@@ -1293,132 +1563,6 @@
           }
         }
       },
-      "getStatisticsSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with statistics for given period and balance totals",
-            "properties": {
-              "statistics": {
-                "type": "array",
-                "description": "Array of statistics objects",
-                "items": {
-                  "properties": {
-                    "category": {
-                      "type": "string",
-                      "description": "Category of transaction",
-                      "example": "Регулярный доход"
-                    },
-                    "income": {
-                      "type": "boolean",
-                      "description": "Is category an income",
-                      "example": true
-                    },
-                    "sum": {
-                      "type": "integer",
-                      "description": "Total amount of this type of transaction within given period",
-                      "example": 500
-                    },
-                    "color": {
-                      "type": "string",
-                      "description": "Color of the transaction category",
-                      "example": "#6e78e8"
-                    }
-                  }
-                }
-              },
-              "totals": {
-                "type": "object",
-                "properties": {
-                  "income": {
-                    "type": "integer",
-                    "description": "Amount of total income within given period",
-                    "example": 500
-                  },
-                  "expense": {
-                    "type": "integer",
-                    "description": "Amount of total expenses within given period",
-                    "example": 200
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "Amount of total current balance within given period",
-                    "example": 300
-                  }
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "status": "success",
-          "code": 200,
-          "data": {
-            "statistics": [
-              {
-                "category": "Регулярный доход",
-                "income": true,
-                "sum": 1500,
-                "color": "#1b5e20"
-              },
-              {
-                "category": "Основные расходы",
-                "income": false,
-                "sum": 200,
-                "color": "#fed057"
-              },
-              {
-                "category": "Машина",
-                "income": false,
-                "sum": 300,
-                "color": "#6e78e8"
-              },
-              {
-                "category": "Продукты",
-                "income": false,
-                "sum": 400,
-                "color": "#4a56e2"
-              }
-            ],
-            "totals": {
-              "income": 500,
-              "expense": 900,
-              "balance": 600
-            }
-          }
-        }
-      },
-      "getStatisticsErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'endDate' is required"
-          }
-        }
-      },
       "createCategoryRequest": {
         "type": "object",
         "required": ["name", "income"],
@@ -1506,148 +1650,6 @@
           }
         }
       },
-      "createTransactionRequest": {
-        "type": "object",
-        "required": ["date", "income", "category", "sum"],
-        "properties": {
-          "date": {
-            "type": "string",
-            "description": "Transaction's date indicated by user",
-            "example": "2021-07-05"
-          },
-          "income": {
-            "type": "boolean",
-            "description": "Is transaction income",
-            "example": false
-          },
-          "category": {
-            "type": "string",
-            "description": "Category of transaction",
-            "example": "Основные расходы"
-          },
-          "comment": {
-            "type": "string",
-            "description": "User's comment about transaction",
-            "example": "Круассан и чай"
-          },
-          "sum": {
-            "type": "integer",
-            "description": "Sum of transaction",
-            "example": 30
-          }
-        }
-      },
-      "updateTransactionRequest": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "description": "Transaction's date indicated by user",
-            "example": "2021-07-05"
-          },
-          "income": {
-            "type": "boolean",
-            "description": "Is transaction income",
-            "example": false
-          },
-          "category": {
-            "type": "string",
-            "description": "Category of transaction",
-            "example": "Основные расходы"
-          },
-          "comment": {
-            "type": "string",
-            "description": "User's comment about transaction",
-            "example": "Круассан и чай"
-          },
-          "sum": {
-            "type": "integer",
-            "description": "Sum of transaction",
-            "example": 30
-          }
-        }
-      },
-      "createTransactionSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 201
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with information about newly created tansaction",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Transaction ID",
-                "example": "60e2fcb6e0801939c8016539"
-              },
-              "date": {
-                "type": "string",
-                "description": "Transaction's date indicated by user",
-                "example": "2021-07-05"
-              },
-              "income": {
-                "type": "boolean",
-                "description": "Is transaction income",
-                "example": false
-              },
-              "category": {
-                "type": "string",
-                "description": "Category of transaction",
-                "example": "Продукты"
-              },
-              "comment": {
-                "type": "string",
-                "description": "User's comment about transaction",
-                "example": "Ингредиенты для шакшуши"
-              },
-              "sum": {
-                "type": "integer",
-                "description": "Sum of transaction",
-                "example": 400
-              },
-              "createdAt": {
-                "type": "string",
-                "description": "Date of entry creation",
-                "example": "2021-07-05T12:36:06.595Z"
-              },
-              "updatedAt": {
-                "type": "string",
-                "description": "Date of entry update",
-                "example": "2021-07-05T12:36:06.595Z"
-              }
-            }
-          }
-        }
-      },
-      "createTransactionErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'date' must be in YYYY-MM-DD format"
-          }
-        }
-      },
       "createCategoryErrorResponse": {
         "type": "object",
         "properties": {
@@ -1665,404 +1667,6 @@
             "type": "string",
             "description": "Joi validation error message",
             "example": "'income' is required"
-          }
-        }
-      },
-      "getTransactionsSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with information about tansactions, pagination, and balance totals",
-            "properties": {
-              "transactions": {
-                "type": "array",
-                "description": "Array of transactions objects",
-                "items": {
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Transaction ID",
-                      "example": "60e2fcb6e0801939c8016539"
-                    },
-                    "category": {
-                      "type": "string",
-                      "description": "Category of transaction",
-                      "example": "Регулярный доход"
-                    },
-                    "income": {
-                      "type": "boolean",
-                      "description": "Is category an income",
-                      "example": true
-                    },
-                    "date": {
-                      "type": "string",
-                      "description": "Date indicated by the user",
-                      "example": "2021-05-04T21:00:00.000Z"
-                    },
-                    "comment": {
-                      "type": "string",
-                      "description": "Comment for the transaction",
-                      "example": "ЗП Джуна"
-                    },
-                    "sum": {
-                      "type": "integer",
-                      "description": "Amount of the transaction",
-                      "example": 500
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "description": "Date of entry creation",
-                      "example": "2021-07-05T12:36:06.595Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "description": "Date of entry update",
-                      "example": "2021-07-05T12:36:06.595Z"
-                    }
-                  }
-                }
-              },
-              "pagination": {
-                "type": "object",
-                "properties": {
-                  "totalTransactions": {
-                    "type": "integer",
-                    "description": "Amount of total transactions",
-                    "example": 50
-                  },
-                  "offset": {
-                    "type": "integer",
-                    "description": "Amount of transactions to skip. 0 by default",
-                    "example": 5
-                  },
-                  "limit": {
-                    "type": "integer",
-                    "description": "Amount of transactions per page. 5 by default",
-                    "example": 5
-                  },
-                  "totalPages": {
-                    "type": "integer",
-                    "description": "Amount of total pages",
-                    "example": 10
-                  },
-                  "currentPage": {
-                    "type": "integer",
-                    "description": "Currently returned page",
-                    "example": 1
-                  },
-                  "pagingCounter": {
-                    "type": "integer",
-                    "description": "Number of the first element on the current page",
-                    "example": 1
-                  },
-                  "hasPrevPage": {
-                    "type": "boolean",
-                    "description": "If there is a page before the current page",
-                    "example": false
-                  },
-                  "hasNextPage": {
-                    "type": "boolean",
-                    "description": "If there is a page after the current page",
-                    "example": true
-                  },
-                  "prevPage": {
-                    "type": "integer",
-                    "description": "Number of the previous page. If no page - null is returned",
-                    "example": null
-                  },
-                  "nextPage": {
-                    "type": "integer",
-                    "description": "Number of the next page. If no page - null is returned",
-                    "example": 2
-                  }
-                }
-              },
-              "totals": {
-                "type": "object",
-                "properties": {
-                  "income": {
-                    "type": "integer",
-                    "description": "Amount of total income",
-                    "example": 500
-                  },
-                  "expense": {
-                    "type": "integer",
-                    "description": "Amount of total expenses",
-                    "example": 200
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "Amount of total current balance",
-                    "example": 300
-                  }
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "status": "success",
-          "code": 200,
-          "data": {
-            "transactions": [
-              {
-                "id": "60e2fcb6e0801939c8016539",
-                "category": "Регулярный доход",
-                "income": true,
-                "date": "2021-05-04T21:00:00.000Z",
-                "comment": "ЗП Джуна",
-                "sum": 500,
-                "createdAt": "2021-07-05T12:36:06.595Z",
-                "updatedAt": "2021-07-05T12:36:06.595Z"
-              },
-              {
-                "id": "60e2fccce0801939c801653b",
-                "category": "Основные расходы",
-                "income": false,
-                "date": "2021-05-04T21:00:00.000Z",
-                "comment": "Еда",
-                "sum": 200,
-                "createdAt": "2021-07-05T12:36:28.570Z",
-                "updatedAt": "2021-07-05T12:36:28.570Z"
-              }
-            ],
-            "pagination": {
-              "totalTransactions": 10,
-              "offset": 0,
-              "limit": 5,
-              "totalPages": 2,
-              "currentPage": 1,
-              "pagingCounter": 1,
-              "hasPrevPage": false,
-              "hasNextPage": true,
-              "prevPage": null,
-              "nextPage": 2
-            },
-            "totals": {
-              "income": 500,
-              "expense": 200,
-              "balance": 300
-            }
-          }
-        }
-      },
-      "getTransactionSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with information about tansactions, pagination, and balance totals",
-            "properties": {
-              "transaction": {
-                "type": "object",
-                "description": "Requested transaction",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Transaction ID",
-                    "example": "60e2fcb6e0801939c8016539"
-                  },
-                  "category": {
-                    "type": "string",
-                    "description": "Category of transaction",
-                    "example": "Регулярный доход"
-                  },
-                  "income": {
-                    "type": "boolean",
-                    "description": "Is category an income",
-                    "example": true
-                  },
-                  "date": {
-                    "type": "string",
-                    "description": "Date indicated by the user",
-                    "example": "2021-05-04T21:00:00.000Z"
-                  },
-                  "comment": {
-                    "type": "string",
-                    "description": "Comment for the transaction",
-                    "example": "ЗП Джуна"
-                  },
-                  "sum": {
-                    "type": "integer",
-                    "description": "Amount of the transaction",
-                    "example": 500
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "description": "Date of entry creation",
-                    "example": "2021-07-05T12:36:06.595Z"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "description": "Date of entry update",
-                    "example": "2021-07-05T12:36:06.595Z"
-                  },
-                  "owner": {
-                    "type": "string",
-                    "description": "Owner's ID",
-                    "example": "60e973cfe53c0b3ed49951c1"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "status": "success",
-          "code": 200,
-          "data": {
-            "transaction": {
-              "income": false,
-              "category": "Машина",
-              "comment": "Чистка ноутбука",
-              "date": "2021-08-01T00:00:00.000Z",
-              "sum": 700,
-              "owner": "60e973cfe53c0b3ed49951c1",
-              "createdAt": "2021-07-10T12:51:48.716Z",
-              "updatedAt": "2021-07-10T12:51:48.716Z",
-              "id": "60e997e4a7140241b40fcc70"
-            }
-          }
-        }
-      },
-      "queryParamsErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'limit' must be a number"
-          }
-        }
-      },
-      "invalidDbIdResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Validation error message",
-            "example": "Invalid params id."
-          }
-        }
-      },
-      "unauthorizedErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 401
-          },
-          "message": {
-            "type": "string",
-            "description": "Unauthorized error message",
-            "example": "Not authorized."
-          }
-        }
-      },
-      "limitRateExceededResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 429
-          },
-          "message": {
-            "type": "string",
-            "description": "Rate limit exceeded error message",
-            "example": "Too many requests. Please try again later."
-          }
-        }
-      },
-      "resourceNotFoundResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 404
-          },
-          "message": {
-            "type": "string",
-            "description": "Resource not found error message",
-            "example": "Not found"
-          }
-        }
-      },
-      "deleteTransactionSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "message": {
-            "type": "string",
-            "description": "Response message",
-            "example": "Transaction was successfully deleted."
           }
         }
       },
@@ -2191,6 +1795,553 @@
             "type": "string",
             "description": "Response message",
             "example": "Category was successfully deleted."
+          }
+        }
+      },
+      "createTransactionRequest": {
+        "type": "object",
+        "required": ["date", "income", "category", "sum"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
+            "type": "integer",
+            "description": "Sum of transaction",
+            "example": 30
+          }
+        }
+      },
+      "createTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 201
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about newly created tansaction",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Transaction ID",
+                "example": "60e2fcb6e0801939c8016539"
+              },
+              "date": {
+                "type": "string",
+                "description": "Transaction's date indicated by user",
+                "example": "2021-07-05"
+              },
+              "income": {
+                "type": "boolean",
+                "description": "Is transaction income",
+                "example": false
+              },
+              "category": {
+                "type": "string",
+                "description": "Category of transaction",
+                "example": "Продукты"
+              },
+              "comment": {
+                "type": "string",
+                "description": "User's comment about transaction",
+                "example": "Ингредиенты для шакшуши"
+              },
+              "sum": {
+                "type": "integer",
+                "description": "Sum of transaction",
+                "example": 400
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date of entry creation",
+                "example": "2021-07-05T12:36:06.595Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "description": "Date of entry update",
+                "example": "2021-07-05T12:36:06.595Z"
+              }
+            }
+          }
+        }
+      },
+      "createTransactionErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'date' must be in YYYY-MM-DD format"
+          }
+        }
+      },
+      "updateTransactionRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
+            "type": "integer",
+            "description": "Sum of transaction",
+            "example": 30
+          }
+        }
+      },
+      "getTransactionsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about tansactions, pagination, and balance totals",
+            "properties": {
+              "transactions": {
+                "type": "array",
+                "description": "Array of transactions objects",
+                "items": {
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Transaction ID",
+                      "example": "60e2fcb6e0801939c8016539"
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "Date indicated by the user",
+                      "example": "2021-05-04T21:00:00.000Z"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "description": "Comment for the transaction",
+                      "example": "ЗП Джуна"
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Amount of the transaction",
+                      "example": 500
+                    },
+                    "owner": {
+                      "type": "string",
+                      "description": "ID of the user who created the transaction",
+                      "example": "60ed89619fd9fd26a004cfa1"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "Date of entry creation",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "Date of entry update",
+                      "example": "2021-07-05T12:36:06.595Z"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance",
+                    "example": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "transactions": [
+              {
+                "id": "60e2fcb6e0801939c8016539",
+                "category": "Регулярный доход",
+                "income": true,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "ЗП Джуна",
+                "sum": 500,
+                "createdAt": "2021-07-05T12:36:06.595Z",
+                "updatedAt": "2021-07-05T12:36:06.595Z"
+              },
+              {
+                "id": "60e2fccce0801939c801653b",
+                "category": "Основные расходы",
+                "income": false,
+                "date": "2021-05-04T21:00:00.000Z",
+                "comment": "Еда",
+                "sum": 200,
+                "createdAt": "2021-07-05T12:36:28.570Z",
+                "updatedAt": "2021-07-05T12:36:28.570Z"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 200,
+              "balance": 300
+            }
+          }
+        }
+      },
+      "getTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with information about tansactions and balance totals",
+            "properties": {
+              "transaction": {
+                "type": "object",
+                "description": "Requested transaction",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Transaction ID",
+                    "example": "60e2fcb6e0801939c8016539"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Category of transaction",
+                    "example": "Регулярный доход"
+                  },
+                  "income": {
+                    "type": "boolean",
+                    "description": "Is category an income",
+                    "example": true
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Date indicated by the user",
+                    "example": "2021-05-04T21:00:00.000Z"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment for the transaction",
+                    "example": "ЗП Джуна"
+                  },
+                  "sum": {
+                    "type": "integer",
+                    "description": "Amount of the transaction",
+                    "example": 500
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Date of entry creation",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Date of entry update",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Owner's ID",
+                    "example": "60e973cfe53c0b3ed49951c1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "transaction": {
+              "income": false,
+              "category": "Машина",
+              "comment": "Чистка ноутбука",
+              "date": "2021-08-01T00:00:00.000Z",
+              "sum": 700,
+              "owner": "60e973cfe53c0b3ed49951c1",
+              "createdAt": "2021-07-10T12:51:48.716Z",
+              "updatedAt": "2021-07-10T12:51:48.716Z",
+              "id": "60e997e4a7140241b40fcc70"
+            }
+          }
+        }
+      },
+      "deleteTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Transaction was successfully deleted."
+          }
+        }
+      },
+      "getCurrencySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "Payload with an array of currency rates",
+            "items": {
+              "properties": {
+                "ccy": {
+                  "type": "string",
+                  "description": "Foreign currency",
+                  "example": "USD"
+                },
+                "base_ccy": {
+                  "type": "string",
+                  "description": "Base currency",
+                  "example": "UAH"
+                },
+                "buy": {
+                  "type": "string",
+                  "description": "Buy price",
+                  "example": "26.95000"
+                },
+                "sale": {
+                  "type": "string",
+                  "description": "Sale price",
+                  "example": "27.35000"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "categories": [
+              {
+                "ccy": "USD",
+                "base_ccy": "UAH",
+                "buy": "26.95000",
+                "sale": "27.35000"
+              },
+              {
+                "ccy": "EUR",
+                "base_ccy": "UAH",
+                "buy": "31.75000",
+                "sale": "32.35000"
+              },
+              {
+                "ccy": "RUR",
+                "base_ccy": "UAH",
+                "buy": "0.35000",
+                "sale": "0.38000"
+              }
+            ]
+          }
+        }
+      },
+      "queryParamsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'endDate' is required"
+          }
+        }
+      },
+      "invalidDbIdResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Validation error message",
+            "example": "Invalid params id."
+          }
+        }
+      },
+      "unauthorizedErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "description": "Unauthorized error message",
+            "example": "Not authorized."
+          }
+        }
+      },
+      "resourceNotFoundResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "description": "Resource not found error message",
+            "example": "Not found"
+          }
+        }
+      },
+      "limitRateExceededResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 429
+          },
+          "message": {
+            "type": "string",
+            "description": "Rate limit exceeded error message",
+            "example": "Too many requests. Please try again later."
           }
         }
       }
