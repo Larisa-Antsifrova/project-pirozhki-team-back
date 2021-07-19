@@ -10,8 +10,6 @@ class TransactionControllers {
       const { id } = req.user;
       const { startDate, endDate } = req.query;
 
-      console.log('REQ QUERY', startDate, endDate);
-
       const transactions = await Transactions.getAllTransactionsWithinPeriod(
         id,
         startDate,
