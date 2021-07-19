@@ -35,6 +35,10 @@
     {
       "name": "Transactions",
       "description": "Transactions endpoints"
+    },
+    {
+      "name": "Currency Rates",
+      "description": "Currency rates endpoints"
     }
   ],
   "paths": {
@@ -934,6 +938,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/resourceNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/currency": {
+      "get": {
+        "tags": ["Currency Rates"],
+        "summary": "Getting currency rates from PrivatBank API",
+        "parameters": [],
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getCurrencySuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unathorized error response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedErrorResponse"
                 }
               }
             }
@@ -2139,6 +2173,75 @@
             "type": "string",
             "description": "Response message",
             "example": "Transaction was successfully deleted."
+          }
+        }
+      },
+      "getCurrencySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "array",
+            "description": "Payload with an array of currency rates",
+            "items": {
+              "properties": {
+                "ccy": {
+                  "type": "string",
+                  "description": "Foreign currency",
+                  "example": "USD"
+                },
+                "base_ccy": {
+                  "type": "string",
+                  "description": "Base currency",
+                  "example": "UAH"
+                },
+                "buy": {
+                  "type": "string",
+                  "description": "Buy price",
+                  "example": "26.95000"
+                },
+                "sale": {
+                  "type": "string",
+                  "description": "Sale price",
+                  "example": "27.35000"
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "categories": [
+              {
+                "ccy": "USD",
+                "base_ccy": "UAH",
+                "buy": "26.95000",
+                "sale": "27.35000"
+              },
+              {
+                "ccy": "EUR",
+                "base_ccy": "UAH",
+                "buy": "31.75000",
+                "sale": "32.35000"
+              },
+              {
+                "ccy": "RUR",
+                "base_ccy": "UAH",
+                "buy": "0.35000",
+                "sale": "0.38000"
+              }
+            ]
           }
         }
       },
