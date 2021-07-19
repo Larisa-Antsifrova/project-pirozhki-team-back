@@ -1,4 +1,4 @@
-const Transaction = require("../models/transaction-model");
+const Transaction = require('../models/transaction-model');
 
 class Transactions {
   async getTransactionById(ownerId, transactionId) {
@@ -11,12 +11,12 @@ class Transactions {
 
   async getEarliestTransaction(ownerId) {
     const options = {
-      sort: { date: 1 },
+      sort: { date: 1 }
     };
 
     const { docs: transactions } = await Transaction.paginate(
       { owner: ownerId },
-      options,
+      options
     );
 
     return transactions[0];
@@ -26,16 +26,16 @@ class Transactions {
     const { limit = 5, offset = 0 } = query;
 
     const labels = {
-      docs: "transactions",
-      totalDocs: "totalTransactions",
-      page: "currentPage",
+      docs: 'transactions',
+      totalDocs: 'totalTransactions',
+      page: 'currentPage'
     };
 
     const options = {
       limit,
       offset,
       sort: { date: -1 },
-      customLabels: labels,
+      customLabels: labels
     };
 
     return await Transaction.paginate({ owner: ownerId }, options);
@@ -44,14 +44,14 @@ class Transactions {
   async getAllTransactionsWithinPeriod(ownerId, startDate, endDate) {
     return await Transaction.find({
       owner: ownerId,
-      date: { $gte: startDate, $lte: endDate },
-    });
+      date: { $gte: startDate, $lte: endDate }
+    }).sort({ date: -1, createdAt: -1 });
   }
 
   async addTransaction(ownerId, transaction) {
     return await Transaction.create({
       ...transaction,
-      owner: ownerId,
+      owner: ownerId
     });
   }
 
@@ -59,14 +59,14 @@ class Transactions {
     return await Transaction.findOneAndUpdate(
       { owner: ownerId, _id: transactionId },
       { ...updates },
-      { new: true },
+      { new: true }
     );
   }
 
   async removeTransaction(ownerId, transactionId) {
     return await Transaction.findOneAndDelete({
       owner: ownerId,
-      _id: transactionId,
+      _id: transactionId
     });
   }
 }
