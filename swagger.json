@@ -61,7 +61,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/authSuccessResponse"
+                  "$ref": "#/components/schemas/registrationSuccessResponse"
                 }
               }
             }
@@ -133,6 +133,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/loginBadRequestErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials request response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginInvalidCredentialsErrorResponse"
                 }
               }
             }
@@ -955,6 +965,102 @@
           }
         }
       },
+      "registrationSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 201
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Access token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjU1NzYxOTR9.YbZLT2ATVet_yYlMDuPUy5x_xfYJ7AXMDljGRRgS1pk"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Refresh token",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwZTQzNmUyZGZiYzZiMGRlMDYyNzQ3NCIsIm5hbWUiOiJXYWxsZXQiLCJlbWFpbCI6InRoZWNhcnJvdGE1YUB1a3IubmV0IiwiaWF0IjoxNjI1NTY4OTk0LCJleHAiOjE2MjgxNjA5OTR9.EXNWBeJ0kDpzf2rjrn6whU1cXItSGXnL117jLvJsoiE"
+          },
+          "user": {
+            "type": "object",
+            "description": "User's information object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User's ID",
+                "example": "60e3680607be0344645c9f01"
+              },
+              "name": {
+                "type": "string",
+                "description": "User's name",
+                "example": "Test"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "isVerified": {
+                "type": "boolean",
+                "description": "Is email verification completed",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date when user was created/registered",
+                "example": "2021-07-15T09:20:21.034Z"
+              }
+            }
+          }
+        }
+      },
+      "registrationBadRequestErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'email' must be a valid email"
+          }
+        }
+      },
+      "registrationConflictErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 409
+          },
+          "message": {
+            "type": "string",
+            "description": "Conflict error message",
+            "example": "This email is already in use."
+          }
+        }
+      },
       "loginRequest": {
         "type": "object",
         "required": ["email", "password"],
@@ -1027,6 +1133,46 @@
           }
         }
       },
+      "loginBadRequestErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message. Joi checks only for presence of required fields.",
+            "example": "\"email\" is required"
+          }
+        }
+      },
+      "loginInvalidCredentialsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 401
+          },
+          "message": {
+            "type": "string",
+            "description": "Login error message",
+            "example": "Invalid credentials."
+          }
+        }
+      },
       "verificationSuccessResponse": {
         "type": "object",
         "properties": {
@@ -1050,66 +1196,6 @@
                 "example": "Verification successful"
               }
             }
-          }
-        }
-      },
-      "registrationBadRequestErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'email' must be a valid email"
-          }
-        }
-      },
-      "registrationConflictErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 409
-          },
-          "message": {
-            "type": "string",
-            "description": "Conflict error message",
-            "example": "This email is already in use."
-          }
-        }
-      },
-      "loginBadRequestErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Login error message",
-            "example": "Invalid credentials."
           }
         }
       },
@@ -1156,6 +1242,132 @@
                 "example": "2021-07-13T12:38:57.515Z"
               }
             }
+          }
+        }
+      },
+      "getStatisticsSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with statistics for given period and balance totals",
+            "properties": {
+              "statistics": {
+                "type": "array",
+                "description": "Array of statistics objects",
+                "items": {
+                  "properties": {
+                    "category": {
+                      "type": "string",
+                      "description": "Category of transaction",
+                      "example": "Регулярный доход"
+                    },
+                    "income": {
+                      "type": "boolean",
+                      "description": "Is category an income",
+                      "example": true
+                    },
+                    "sum": {
+                      "type": "integer",
+                      "description": "Total amount of this type of transaction within given period",
+                      "example": 500
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color of the transaction category",
+                      "example": "#6e78e8"
+                    }
+                  }
+                }
+              },
+              "totals": {
+                "type": "object",
+                "properties": {
+                  "income": {
+                    "type": "integer",
+                    "description": "Amount of total income within given period",
+                    "example": 500
+                  },
+                  "expense": {
+                    "type": "integer",
+                    "description": "Amount of total expenses within given period",
+                    "example": 200
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Amount of total current balance within given period",
+                    "example": 300
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "statistics": [
+              {
+                "category": "Регулярный доход",
+                "income": true,
+                "sum": 1500,
+                "color": "#1b5e20"
+              },
+              {
+                "category": "Основные расходы",
+                "income": false,
+                "sum": 200,
+                "color": "#fed057"
+              },
+              {
+                "category": "Машина",
+                "income": false,
+                "sum": 300,
+                "color": "#6e78e8"
+              },
+              {
+                "category": "Продукты",
+                "income": false,
+                "sum": 400,
+                "color": "#4a56e2"
+              }
+            ],
+            "totals": {
+              "income": 500,
+              "expense": 900,
+              "balance": 600
+            }
+          }
+        }
+      },
+      "getStatisticsErrorResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "error"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'endDate' is required"
           }
         }
       },
@@ -1311,132 +1523,6 @@
           }
         }
       },
-      "getStatisticsSuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with statistics for given period and balance totals",
-            "properties": {
-              "statistics": {
-                "type": "array",
-                "description": "Array of statistics objects",
-                "items": {
-                  "properties": {
-                    "category": {
-                      "type": "string",
-                      "description": "Category of transaction",
-                      "example": "Регулярный доход"
-                    },
-                    "income": {
-                      "type": "boolean",
-                      "description": "Is category an income",
-                      "example": true
-                    },
-                    "sum": {
-                      "type": "integer",
-                      "description": "Total amount of this type of transaction within given period",
-                      "example": 500
-                    },
-                    "color": {
-                      "type": "string",
-                      "description": "Color of the transaction category",
-                      "example": "#6e78e8"
-                    }
-                  }
-                }
-              },
-              "totals": {
-                "type": "object",
-                "properties": {
-                  "income": {
-                    "type": "integer",
-                    "description": "Amount of total income within given period",
-                    "example": 500
-                  },
-                  "expense": {
-                    "type": "integer",
-                    "description": "Amount of total expenses within given period",
-                    "example": 200
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "Amount of total current balance within given period",
-                    "example": 300
-                  }
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "status": "success",
-          "code": 200,
-          "data": {
-            "statistics": [
-              {
-                "category": "Регулярный доход",
-                "income": true,
-                "sum": 1500,
-                "color": "#1b5e20"
-              },
-              {
-                "category": "Основные расходы",
-                "income": false,
-                "sum": 200,
-                "color": "#fed057"
-              },
-              {
-                "category": "Машина",
-                "income": false,
-                "sum": 300,
-                "color": "#6e78e8"
-              },
-              {
-                "category": "Продукты",
-                "income": false,
-                "sum": 400,
-                "color": "#4a56e2"
-              }
-            ],
-            "totals": {
-              "income": 500,
-              "expense": 900,
-              "balance": 600
-            }
-          }
-        }
-      },
-      "getStatisticsErrorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'endDate' is required"
-          }
-        }
-      },
       "createCategoryRequest": {
         "type": "object",
         "required": ["name", "income"],
@@ -1524,39 +1610,157 @@
           }
         }
       },
-      "createTransactionRequest": {
+      "createCategoryErrorResponse": {
         "type": "object",
-        "required": ["date", "income", "category", "sum"],
         "properties": {
-          "date": {
+          "status": {
             "type": "string",
-            "description": "Transaction's date indicated by user",
-            "example": "2021-07-05"
+            "description": "Operation status",
+            "example": "error"
           },
-          "income": {
-            "type": "boolean",
-            "description": "Is transaction income",
-            "example": false
-          },
-          "category": {
-            "type": "string",
-            "description": "Category of transaction",
-            "example": "Основные расходы"
-          },
-          "comment": {
-            "type": "string",
-            "description": "User's comment about transaction",
-            "example": "Круассан и чай"
-          },
-          "sum": {
+          "code": {
             "type": "integer",
-            "description": "Sum of transaction",
-            "example": 30
+            "description": "HTTP code",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "description": "Joi validation error message",
+            "example": "'income' is required"
           }
         }
       },
-      "updateTransactionRequest": {
+      "getCategorySuccessResponse": {
         "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "description": "Payload with a category oject",
+            "properties": {
+              "category": {
+                "type": "object",
+                "description": "Category object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Category ID",
+                    "example": "60e2fcb6e0801939c8016539"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Category's name",
+                    "example": "Образование"
+                  },
+                  "income": {
+                    "type": "boolean",
+                    "description": "Is category income",
+                    "example": false
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "Custom color in hex format",
+                    "example": "#009688"
+                  },
+                  "icon": {
+                    "type": "string",
+                    "description": "Custom icon name",
+                    "example": "book-icon"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Owner's ID",
+                    "example": "60eac4cd7fb76924b8434d82"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Date of entry creation",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Date of entry update",
+                    "example": "2021-07-05T12:36:06.595Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": {
+          "status": "success",
+          "code": 200,
+          "data": {
+            "category": {
+              "income": false,
+              "color": "#d84315",
+              "icon": "book-icon",
+              "name": "Образование",
+              "owner": "60eac4cd7fb76924b8434d82",
+              "createdAt": "2021-07-11T11:00:45.551Z",
+              "updatedAt": "2021-07-11T11:00:45.551Z",
+              "id": "60eacf5d380abb12909f6897"
+            }
+          }
+        }
+      },
+      "updateCategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Category's name",
+            "example": "Образование"
+          },
+          "income": {
+            "type": "boolean",
+            "description": "Is category income",
+            "example": false
+          },
+          "color": {
+            "type": "string",
+            "description": "Custom color in hex format",
+            "example": "#009688"
+          },
+          "icon": {
+            "type": "string",
+            "description": "Custom icon name",
+            "example": "book-icon"
+          }
+        }
+      },
+      "deleteCategorySuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Category was successfully deleted."
+          }
+        }
+      },
+      "createTransactionRequest": {
+        "type": "object",
+        "required": ["date", "income", "category", "sum"],
         "properties": {
           "date": {
             "type": "string",
@@ -1666,23 +1870,33 @@
           }
         }
       },
-      "createCategoryErrorResponse": {
+      "updateTransactionRequest": {
         "type": "object",
         "properties": {
-          "status": {
+          "date": {
             "type": "string",
-            "description": "Operation status",
-            "example": "error"
+            "description": "Transaction's date indicated by user",
+            "example": "2021-07-05"
           },
-          "code": {
+          "income": {
+            "type": "boolean",
+            "description": "Is transaction income",
+            "example": false
+          },
+          "category": {
+            "type": "string",
+            "description": "Category of transaction",
+            "example": "Основные расходы"
+          },
+          "comment": {
+            "type": "string",
+            "description": "User's comment about transaction",
+            "example": "Круассан и чай"
+          },
+          "sum": {
             "type": "integer",
-            "description": "HTTP code",
-            "example": 400
-          },
-          "message": {
-            "type": "string",
-            "description": "Joi validation error message",
-            "example": "'income' is required"
+            "description": "Sum of transaction",
+            "example": 30
           }
         }
       },
@@ -1902,6 +2116,26 @@
           }
         }
       },
+      "deleteTransactionSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Transaction was successfully deleted."
+          }
+        }
+      },
       "queryParamsErrorResponse": {
         "type": "object",
         "properties": {
@@ -1962,26 +2196,6 @@
           }
         }
       },
-      "limitRateExceededResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "error"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 429
-          },
-          "message": {
-            "type": "string",
-            "description": "Rate limit exceeded error message",
-            "example": "Too many requests. Please try again later."
-          }
-        }
-      },
       "resourceNotFoundResponse": {
         "type": "object",
         "properties": {
@@ -2002,151 +2216,23 @@
           }
         }
       },
-      "deleteTransactionSuccessResponse": {
+      "limitRateExceededResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
             "description": "Operation status",
-            "example": "success"
+            "example": "error"
           },
           "code": {
             "type": "integer",
             "description": "HTTP code",
-            "example": 200
+            "example": 429
           },
           "message": {
             "type": "string",
-            "description": "Response message",
-            "example": "Transaction was successfully deleted."
-          }
-        }
-      },
-      "getCategorySuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "data": {
-            "type": "object",
-            "description": "Payload with a category oject",
-            "properties": {
-              "category": {
-                "type": "object",
-                "description": "Category object",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Category ID",
-                    "example": "60e2fcb6e0801939c8016539"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Category's name",
-                    "example": "Образование"
-                  },
-                  "income": {
-                    "type": "boolean",
-                    "description": "Is category income",
-                    "example": false
-                  },
-                  "color": {
-                    "type": "string",
-                    "description": "Custom color in hex format",
-                    "example": "#009688"
-                  },
-                  "icon": {
-                    "type": "string",
-                    "description": "Custom icon name",
-                    "example": "book-icon"
-                  },
-                  "owner": {
-                    "type": "string",
-                    "description": "Owner's ID",
-                    "example": "60eac4cd7fb76924b8434d82"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "description": "Date of entry creation",
-                    "example": "2021-07-05T12:36:06.595Z"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "description": "Date of entry update",
-                    "example": "2021-07-05T12:36:06.595Z"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "example": {
-          "status": "success",
-          "code": 200,
-          "data": {
-            "category": {
-              "income": false,
-              "color": "#d84315",
-              "icon": "book-icon",
-              "name": "Образование",
-              "owner": "60eac4cd7fb76924b8434d82",
-              "createdAt": "2021-07-11T11:00:45.551Z",
-              "updatedAt": "2021-07-11T11:00:45.551Z",
-              "id": "60eacf5d380abb12909f6897"
-            }
-          }
-        }
-      },
-      "updateCategoryRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Category's name",
-            "example": "Образование"
-          },
-          "income": {
-            "type": "boolean",
-            "description": "Is category income",
-            "example": false
-          },
-          "color": {
-            "type": "string",
-            "description": "Custom color in hex format",
-            "example": "#009688"
-          },
-          "icon": {
-            "type": "string",
-            "description": "Custom icon name",
-            "example": "book-icon"
-          }
-        }
-      },
-      "deleteCategorySuccessResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "Operation status",
-            "example": "success"
-          },
-          "code": {
-            "type": "integer",
-            "description": "HTTP code",
-            "example": 200
-          },
-          "message": {
-            "type": "string",
-            "description": "Response message",
-            "example": "Category was successfully deleted."
+            "description": "Rate limit exceeded error message",
+            "example": "Too many requests. Please try again later."
           }
         }
       }
