@@ -1309,6 +1309,11 @@
                     "example": 300
                   }
                 }
+              },
+              "earliest": {
+                "type": "string",
+                "description": "Date the transaction was made indicated by user",
+                "example": "2021-07-05T00:00:00.000Z"
               }
             }
           }
@@ -1347,7 +1352,8 @@
               "income": 500,
               "expense": 900,
               "balance": 600
-            }
+            },
+            "earliest": "2021-07-05T00:00:00.000Z"
           }
         }
       },
