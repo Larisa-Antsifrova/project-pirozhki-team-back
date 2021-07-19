@@ -689,22 +689,20 @@
         "parameters": [
           {
             "in": "query",
-            "name": "limit",
-            "required": false,
-            "description": "5 is by default",
+            "name": "startDate",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "example": 10
+              "type": "string",
+              "example": "2021-07-01"
             }
           },
           {
             "in": "query",
-            "name": "offset",
-            "required": false,
-            "description": "0 is by default",
+            "name": "endDate",
+            "required": true,
             "schema": {
-              "type": "integer",
-              "example": 0
+              "type": "string",
+              "example": "2021-08-01"
             }
           }
         ],
@@ -976,6 +974,16 @@
       "authSuccessResponse": {
         "type": "object",
         "properties": {
+          "status": {
+            "type": "string",
+            "description": "Operation status",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "description": "HTTP code",
+            "example": 200
+          },
           "accessToken": {
             "type": "string",
             "description": "Access token",
@@ -1004,6 +1012,16 @@
                 "type": "string",
                 "description": "User's email",
                 "format": "email"
+              },
+              "isVerified": {
+                "type": "boolean",
+                "description": "Is email verification completed",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Date when user was created/registered",
+                "example": "2021-07-15T09:20:21.034Z"
               }
             }
           }
@@ -1019,7 +1037,7 @@
               "status": {
                 "type": "string",
                 "description": "Operation status",
-                "example": "error"
+                "example": "success"
               },
               "code": {
                 "type": "integer",
@@ -1720,6 +1738,11 @@
                       "description": "Amount of the transaction",
                       "example": 500
                     },
+                    "owner": {
+                      "type": "string",
+                      "description": "ID of the user who created the transaction",
+                      "example": "60ed89619fd9fd26a004cfa1"
+                    },
                     "createdAt": {
                       "type": "string",
                       "description": "Date of entry creation",
@@ -1730,61 +1753,6 @@
                       "description": "Date of entry update",
                       "example": "2021-07-05T12:36:06.595Z"
                     }
-                  }
-                }
-              },
-              "pagination": {
-                "type": "object",
-                "properties": {
-                  "totalTransactions": {
-                    "type": "integer",
-                    "description": "Amount of total transactions",
-                    "example": 50
-                  },
-                  "offset": {
-                    "type": "integer",
-                    "description": "Amount of transactions to skip. 0 by default",
-                    "example": 5
-                  },
-                  "limit": {
-                    "type": "integer",
-                    "description": "Amount of transactions per page. 5 by default",
-                    "example": 5
-                  },
-                  "totalPages": {
-                    "type": "integer",
-                    "description": "Amount of total pages",
-                    "example": 10
-                  },
-                  "currentPage": {
-                    "type": "integer",
-                    "description": "Currently returned page",
-                    "example": 1
-                  },
-                  "pagingCounter": {
-                    "type": "integer",
-                    "description": "Number of the first element on the current page",
-                    "example": 1
-                  },
-                  "hasPrevPage": {
-                    "type": "boolean",
-                    "description": "If there is a page before the current page",
-                    "example": false
-                  },
-                  "hasNextPage": {
-                    "type": "boolean",
-                    "description": "If there is a page after the current page",
-                    "example": true
-                  },
-                  "prevPage": {
-                    "type": "integer",
-                    "description": "Number of the previous page. If no page - null is returned",
-                    "example": null
-                  },
-                  "nextPage": {
-                    "type": "integer",
-                    "description": "Number of the next page. If no page - null is returned",
-                    "example": 2
                   }
                 }
               },
@@ -1837,18 +1805,6 @@
                 "updatedAt": "2021-07-05T12:36:28.570Z"
               }
             ],
-            "pagination": {
-              "totalTransactions": 10,
-              "offset": 0,
-              "limit": 5,
-              "totalPages": 2,
-              "currentPage": 1,
-              "pagingCounter": 1,
-              "hasPrevPage": false,
-              "hasNextPage": true,
-              "prevPage": null,
-              "nextPage": 2
-            },
             "totals": {
               "income": 500,
               "expense": 200,
@@ -1872,7 +1828,7 @@
           },
           "data": {
             "type": "object",
-            "description": "Payload with information about tansactions, pagination, and balance totals",
+            "description": "Payload with information about tansactions and balance totals",
             "properties": {
               "transaction": {
                 "type": "object",
@@ -1962,7 +1918,7 @@
           "message": {
             "type": "string",
             "description": "Joi validation error message",
-            "example": "'limit' must be a number"
+            "example": "'endDate' is required"
           }
         }
       },
