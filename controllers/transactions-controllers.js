@@ -1,16 +1,22 @@
-const Transactions = require("../repositories/transactions-repository");
-const HttpCodes = require("../helpers/http-codes");
-const Statuses = require("../helpers/statuses");
-const Messages = require("../helpers/messages");
-const calculateTotals = require("../helpers/total-calculator");
+const Transactions = require('../repositories/transactions-repository');
+const HttpCodes = require('../helpers/http-codes');
+const Statuses = require('../helpers/statuses');
+const Messages = require('../helpers/messages');
+const calculateTotals = require('../helpers/total-calculator');
 
 class TransactionControllers {
   async getTransactions(req, res, next) {
     try {
       const { id } = req.user;
-      const query = req.query;
+      const { startDate, endDate } = req.query;
 
-      const { transactions, ...pagination } = await Transactions.getPaginatedTransactions(id, query);
+      console.log('REQ QUERY', startDate, endDate);
+
+      const transactions = await Transactions.getAllTransactionsWithinPeriod(
+        id,
+        startDate,
+        endDate
+      );
 
       const allTransactions = await Transactions.getAllTransactions(id);
 
@@ -19,7 +25,7 @@ class TransactionControllers {
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { transactions, pagination, totals },
+        data: { transactions, totals }
       });
     } catch (error) {
       next(error);
@@ -31,20 +37,23 @@ class TransactionControllers {
       const ownerId = req.user.id;
       const transactionId = req.params.transactionId;
 
-      const [transaction] = await Transactions.getTransactionById(ownerId, transactionId);
+      const [transaction] = await Transactions.getTransactionById(
+        ownerId,
+        transactionId
+      );
 
       if (!transaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: Messages.NOT_FOUND_TRANSACTION,
+          message: Messages.NOT_FOUND_TRANSACTION
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { transaction },
+        data: { transaction }
       });
     } catch (error) {
       next(error);
@@ -56,12 +65,15 @@ class TransactionControllers {
       const transaction = req.body;
       const { id } = req.user;
 
-      const addedTransaction = await Transactions.addTransaction(id, transaction);
+      const addedTransaction = await Transactions.addTransaction(
+        id,
+        transaction
+      );
 
       return res.status(HttpCodes.CREATED).json({
         status: Statuses.SUCCESS,
         code: HttpCodes.CREATED,
-        data: addedTransaction,
+        data: addedTransaction
       });
     } catch (error) {
       next(error);
@@ -74,20 +86,24 @@ class TransactionControllers {
       const transactionId = req.params.transactionId;
       const updates = req.body;
 
-      const updatedTransaction = await Transactions.updateTransaction(ownerId, transactionId, updates);
+      const updatedTransaction = await Transactions.updateTransaction(
+        ownerId,
+        transactionId,
+        updates
+      );
 
       if (!updatedTransaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: Messages.NOT_FOUND_TRANSACTION,
+          message: Messages.NOT_FOUND_TRANSACTION
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        data: { transaction: updatedTransaction },
+        data: { transaction: updatedTransaction }
       });
     } catch (error) {
       next(error);
@@ -99,20 +115,23 @@ class TransactionControllers {
       const ownerId = req.user.id;
       const transactionId = req.params.transactionId;
 
-      const deletedTransaction = await Transactions.removeTransaction(ownerId, transactionId);
+      const deletedTransaction = await Transactions.removeTransaction(
+        ownerId,
+        transactionId
+      );
 
       if (!deletedTransaction) {
         return res.status(HttpCodes.NOT_FOUND).json({
           status: Statuses.ERROR,
           code: HttpCodes.NOT_FOUND,
-          message: Messages.NOT_FOUND_TRANSACTION,
+          message: Messages.NOT_FOUND_TRANSACTION
         });
       }
 
       return res.json({
         status: Statuses.SUCCESS,
         code: HttpCodes.OK,
-        message: Messages.DELETE_TRANSACTION,
+        message: Messages.DELETE_TRANSACTION
       });
     } catch (error) {
       next(error);
