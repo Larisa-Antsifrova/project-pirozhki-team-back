@@ -1,6 +1,6 @@
 ![Banner](./tools-banner.png)
 
-# Wallet App: Web Server Application
+# Wallet App: Web Server Application v 1.0
 
 Current web server application was built with RESTful architecture in mind.
 The server allows to:
